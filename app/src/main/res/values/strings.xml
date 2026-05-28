@@ -1,0 +1,59 @@
+<resources>
+    <string name="app_name">RoadRage - Safe Driving Companion</string>
+
+    <!-- Home Screen -->
+    <string name="home_title">RoadRage</string>
+    <string name="home_subtitle">Drive smarter, not harder.</string>
+    <string name="persona_label">YOUR PERSONA</string>
+    <string name="avg_score_label">AVERAGE SCORE</string>
+    <string name="start_trip">Start Trip</string>
+
+    <!-- Mood Screen -->
+    <string name="mood_title">Before you drive</string>
+    <string name="mood_subtitle">How are you feeling right now?</string>
+    <string name="mood_happy">😊 Happy</string>
+    <string name="mood_neutral">😐 Neutral</string>
+    <string name="mood_tired">😴 Tired</string>
+    <string name="mood_stressed">😣 Stressed</string>
+    <string name="confirm_mood">Start Tracking</string>
+
+    <!-- Trip Screen -->
+    <string name="trip_in_progress">Trip in Progress</string>
+    <string name="speed_label">SPEED</string>
+    <string name="harsh_events_label">HARSH EVENTS</string>
+    <string name="stop_trip">Stop Trip</string>
+
+    <!-- Result Screen -->
+    <string name="trip_complete">Trip Complete</string>
+    <string name="score_out_of">out of 100</string>
+    <string name="back_to_home">Back to Home</string>
+
+    <!-- History Screen -->
+    <string name="trip_history">Trip History</string>
+    <string name="no_trips">No trips yet</string>
+    <string name="no_trips_subtitle">Start your first trip from the home screen</string>
+
+    <!-- Profile Screen -->
+    <string name="profile_title">Profile</string>
+    <string name="trips_label">TRIPS</string>
+    <string name="current_persona">CURRENT PERSONA</string>
+    <string name="mood_impact">Mood Impact</string>
+    <string name="mood_impact_subtitle">How your mood affects your driving</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_history">History</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Personas and Messages -->
+    <string name="persona_zen_driver">Zen Driver</string>
+    <string name="persona_city_cruiser">City Cruiser</string>
+    <string name="persona_rocket">The Rocket</string>
+    <string name="persona_ghost_rider">Ghost Rider</string>
+
+    <string name="message_zen">Smooth and consistent. You\'re a natural.</string>
+    <string name="message_cruiser">Pretty good driving with a few rough moments.</string>
+    <string name="message_rocket">Fast and unpredictable. Slow it down.</string>
+    <string name="message_ghost">Multiple harsh events detected. Drive safer.</string>
+
+</resources>

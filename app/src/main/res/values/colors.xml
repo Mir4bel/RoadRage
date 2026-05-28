@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Material3 Primary Colors -->
+    <color name="md_theme_primary">#1B1B1F</color>
+    <color name="md_theme_on_primary">#FFFFFF</color>
+    <color name="md_theme_primary_container">#E8DEF8</color>
+    <color name="md_theme_on_primary_container">#1B1B1F</color>
+
+    <!-- Material3 Secondary Colors (Safety/Warning) -->
+    <color name="md_theme_secondary">#FF6B35</color>
+    <color name="md_theme_on_secondary">#FFFFFF</color>
+    <color name="md_theme_secondary_container">#FFE0CC</color>
+    <color name="md_theme_on_secondary_container">#652B00</color>
+
+    <!-- Material3 Tertiary Colors -->
+    <color name="md_theme_tertiary">#006A6C</color>
+    <color name="md_theme_on_tertiary">#FFFFFF</color>
+    <color name="md_theme_tertiary_container">#A0F0F2</color>
+    <color name="md_theme_on_tertiary_container">#002020</color>
+
+    <!-- Error Colors -->
+    <color name="md_theme_error">#B3261E</color>
+    <color name="md_theme_on_error">#FFFFFF</color>
+    <color name="md_theme_error_container">#F9DEDC</color>
+    <color name="md_theme_on_error_container">#410E0B</color>
+
+    <!-- Background Colors -->
+    <color name="md_theme_background">#FDFBFF</color>
+    <color name="md_theme_on_background">#1C1B1F</color>
+    <color name="md_theme_surface">#FDFBFF</color>
+    <color name="md_theme_on_surface">#1C1B1F</color>
+    <color name="md_theme_surface_variant">#E7E0EC</color>
+    <color name="md_theme_on_surface_variant">#49454F</color>
+
+    <!-- Legacy colors (compatibility) -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Semantic colors for driving -->
+    <color name="color_safe_green">#4CAF50</color>
+    <color name="color_warning_orange">#FF9800</color>
+    <color name="color_danger_red">#F44336</color>
+
+</resources>

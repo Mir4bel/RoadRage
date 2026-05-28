@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    android:background="?attr/colorSurface">
+
+    <TextView
+        android:id="@+id/tv_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Trip in Progress"
+        android:textSize="26sp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="?attr/colorOnBackground"
+        android:layout_marginBottom="48dp"/>
+
+    <!-- Speed card -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="0dp"
+        android:backgroundTint="?attr/colorPrimaryContainer"
+        android:layout_marginBottom="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SPEED"
+                android:textSize="11sp"
+                android:letterSpacing="0.1"
+                android:textColor="?attr/colorOnPrimaryContainer"/>
+
+            <TextView
+                android:id="@+id/tv_speed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 km/h"
+                android:textSize="48sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/colorOnPrimaryContainer"/>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Events card -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="0dp"
+        android:backgroundTint="?attr/colorErrorContainer"
+        android:layout_marginBottom="48dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="HARSH EVENTS"
+                android:textSize="11sp"
+                android:letterSpacing="0.1"
+                android:textColor="?attr/colorOnErrorContainer"/>
+
+            <TextView
+                android:id="@+id/tv_event_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="48sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/colorOnErrorContainer"/>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_stop_trip"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:text="Stop Trip"
+        android:textSize="18sp"
+        android:textColor="?attr/colorError"
+        app:cornerRadius="16dp"
+        app:strokeColor="?attr/colorError"
+        app:strokeWidth="1.5dp"/>
+
+</LinearLayout>
