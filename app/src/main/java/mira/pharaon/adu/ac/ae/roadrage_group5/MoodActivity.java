@@ -3,10 +3,9 @@ package mira.pharaon.adu.ac.ae.roadrage_group5;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButton;
 
-public class MoodActivity extends AppCompatActivity {
+public class MoodActivity extends ModalActivity {
 
     private String selectedMood = "Neutral"; // default
     private MaterialButton lastSelected = null;
@@ -15,6 +14,10 @@ public class MoodActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mood);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Select Mood");
+        }
 
         MaterialButton btnHappy    = findViewById(R.id.btn_mood_happy);
         MaterialButton btnNeutral  = findViewById(R.id.btn_mood_neutral);

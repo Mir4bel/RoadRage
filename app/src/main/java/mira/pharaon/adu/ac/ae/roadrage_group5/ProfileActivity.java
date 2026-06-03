@@ -1,8 +1,10 @@
 package mira.pharaon.adu.ac.ae.roadrage_group5;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import java.util.List;
 
@@ -18,6 +20,7 @@ public class ProfileActivity extends BaseActivity {
         TextView tvAvg         = findViewById(R.id.tv_profile_avg);
         TextView tvPersona     = findViewById(R.id.tv_profile_persona);
         LinearLayout moodContainer = findViewById(R.id.ll_mood_impact);
+        MaterialButton btnDebug = findViewById(R.id.btn_debug);
 
         DatabaseManager tripDAO = new DatabaseManager(this);
 
@@ -73,6 +76,13 @@ public class ProfileActivity extends BaseActivity {
                 card.addView(inner);
                 moodContainer.addView(card);
             }
+        }
+
+        // Debug button click listener
+        if (btnDebug != null) {
+            btnDebug.setOnClickListener(v -> {
+                startActivity(new Intent(this, DebugActivity.class));
+            });
         }
     }
 }

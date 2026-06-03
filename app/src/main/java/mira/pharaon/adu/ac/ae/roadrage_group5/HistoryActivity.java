@@ -1,5 +1,6 @@
 package mira.pharaon.adu.ac.ae.roadrage_group5;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,12 +27,59 @@ public class HistoryActivity extends BaseActivity {
         if (trips.isEmpty()) {
             recyclerView.setVisibility(View.GONE);
             emptyLayout.setVisibility(View.VISIBLE);
+            showEncouragementDialog();
         } else {
             recyclerView.setVisibility(View.VISIBLE);
             emptyLayout.setVisibility(View.GONE);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.setAdapter(new TripAdapter(trips));
+
+            // Analyze trips and show helpful suggestion
+            analyzeTripsAndSuggest(trips);
         }
+    }
+
+    private void analyzeTripsAndSuggest(List<String[]> trips) {
+        // Analyze driving patterns
+        int totalTrips = trips.size();
+        int safeTrips = 0;
+        int recklessTrips = 0;
+
+        for (String[] trip : trips) {
+            try {
+                int score = Integer.parseInt(trip[1]);
+                if (score >= 80) safeTrips++;
+                else if (score < 40) recklessTrips++;
+            } catch (Exception e) {
+                // Skip parse error
+            }
+        }
+
+        String suggestion = "";
+        if (safeTrips >= totalTrips / 2) {
+            suggestion = "🏆 Great job! You're driving safely most of the time.\n\nChallenge: Try to maintain this for 5 consecutive trips!";
+        } else if (recklessTrips >= totalTrips / 2) {
+            suggestion = "⚠️ We've noticed some risky driving patterns.\n\nTip: Focus on smoother turns and gradual acceleration. You've got this!";
+        } else {
+            suggestion = "📈 Your driving is improving! Keep pushing for those Guardian Angel ratings.\n\nHint: Smooth braking = fewer harsh events = better score!";
+        }
+
+        new AlertDialog.Builder(this)
+            .setTitle("Your Driving Analysis")
+            .setMessage(suggestion)
+            .setPositiveButton("Got it!", (dialog, which) -> dialog.dismiss())
+            .show();
+    }
+
+    private void showEncouragementDialog() {
+        new AlertDialog.Builder(this)
+            .setTitle("Start Your Journey!")
+            .setMessage("You haven't taken any trips yet.\n\nGo to the Home screen and start your first trip to begin improving your driving!\n\n🚗 Remember: Safe driving is a skill to master.")
+            .setPositiveButton("Let's Go!", (dialog, which) -> {
+                dialog.dismiss();
+                // Navigate to home
+            })
+            .show();
     }
 
     // Adapter defined inside HistoryActivity for simplicity

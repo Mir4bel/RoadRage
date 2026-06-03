@@ -19,6 +19,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
         if (bottomNav == null) return;
 
+        // Apply color state list to text and icons
+        bottomNav.setItemTextColor(
+            androidx.core.content.ContextCompat.getColorStateList(this, R.color.nav_item_color));
+        bottomNav.setItemIconTintList(
+            androidx.core.content.ContextCompat.getColorStateList(this, R.color.nav_item_color));
+
         bottomNav.setSelectedItemId(selectedItemId);
 
         bottomNav.setOnItemSelectedListener(item -> {

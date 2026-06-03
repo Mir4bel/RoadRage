@@ -1,8 +1,10 @@
 package mira.pharaon.adu.ac.ae.roadrage_group5;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.widget.Button;
@@ -17,7 +19,7 @@ import java.util.List;
 import java.util.Locale;
 
 // TripActivity implements both listener interfaces
-public class TripActivity extends AppCompatActivity
+public class TripActivity extends ModalActivity
         implements AccelerometerManager.AccelerometerEventListener,
         LocationTracker.LocationEventListener {
 
@@ -31,7 +33,9 @@ public class TripActivity extends AppCompatActivity
 
     // We collect events here during the trip, save them to DB on stop
     private List<float[]> harshEvents = new ArrayList<>();
-    // float[] = {severity, type_as_number} — simple enough for now
+    // Speed samples: timestamp, speed
+    private List<long[]> speedSamples = new ArrayList<>();
+    private boolean crashDetected = false;
 
     private static final int LOCATION_PERMISSION_REQUEST = 100;
 
@@ -39,6 +43,10 @@ public class TripActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Trip in Progress");
+        }
 
         // Get mood passed from MoodActivity
         selectedMood = getIntent().getStringExtra("mood");
@@ -88,9 +96,34 @@ public class TripActivity extends AppCompatActivity
         );
     }
 
+    // Called by AccelerometerManager when crash detected
+    @Override
+    public void onCrashDetected(float severity) {
+        crashDetected = true;
+        // Show emergency dialog
+        runOnUiThread(() -> {
+            new AlertDialog.Builder(this)
+                .setTitle("Crash Detected!")
+                .setMessage("A potential collision was detected. Do you need emergency assistance?")
+                .setPositiveButton("Call Emergency", (dialog, which) -> {
+                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                    intent.setData(Uri.parse("tel:999")); // UAE emergency number
+                    startActivity(intent);
+                })
+                .setNegativeButton("I'm OK", (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .setCancelable(false)
+                .show();
+        });
+    }
+
     // Called by LocationTracker every 2 seconds
     @Override
     public void onSpeedUpdate(float speedKmh) {
+        long currentTime = SystemClock.elapsedRealtime();
+        speedSamples.add(new long[]{currentTime, (long) speedKmh});
+
         runOnUiThread(() ->
                 tvSpeed.setText(String.format(Locale.getDefault(), "%.0f km/h", speedKmh))
         );
@@ -122,6 +155,15 @@ public class TripActivity extends AppCompatActivity
         intent.putExtra("duration", durationSeconds);
         intent.putExtra("eventCount", eventCount);
         intent.putExtra("date", date);
+        intent.putExtra("crashDetected", crashDetected);
+
+        // Convert speed samples to arrays for passing
+        long[][] speeds = new long[speedSamples.size()][2];
+        for (int i = 0; i < speedSamples.size(); i++) {
+            speeds[i] = speedSamples.get(i);
+        }
+        intent.putExtra("speedSamples", speeds);
+
         startActivity(intent);
         finish();
     }

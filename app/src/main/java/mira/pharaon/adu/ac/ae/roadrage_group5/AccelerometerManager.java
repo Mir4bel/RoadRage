@@ -10,6 +10,7 @@ public class AccelerometerManager implements SensorEventListener {
 
     private static final float BRAKE_THRESHOLD = 15.0f;
     private static final float TURN_THRESHOLD  = 12.0f;
+    private static final float CRASH_THRESHOLD = 40.0f; // Very high acceleration = potential crash
 
     // Cooldown prevents logging 50 events from one bump
     // One event max every 2 seconds
@@ -23,6 +24,7 @@ public class AccelerometerManager implements SensorEventListener {
     // Same pattern as LocationTracker — interface to talk back to TripActivity
     public interface AccelerometerEventListener {
         void onHarshEvent(String type, float severity);
+        void onCrashDetected(float severity);
     }
 
     // Constructor — call from TripActivity:
@@ -50,9 +52,18 @@ public class AccelerometerManager implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         float x = event.values[0]; // left/right tilt — detects sharp turns
         float y = event.values[1]; // forward/back tilt — detects braking
-        // z = event.values[2] is up/down — not needed for driving
+        float z = event.values[2]; // up/down — can help detect crashes
 
         long now = System.currentTimeMillis();
+
+        // Check for crash (very high acceleration on any axis)
+        float maxAccel = Math.max(Math.abs(x), Math.max(Math.abs(y), Math.abs(z)));
+        if (maxAccel > CRASH_THRESHOLD) {
+            eventListener.onCrashDetected(maxAccel);
+            lastEventTime = now;
+            return; // Don't process as regular event
+        }
+
         if (now - lastEventTime < COOLDOWN_MS) return; // still in cooldown
 
         if (Math.abs(y) > BRAKE_THRESHOLD) {

@@ -18,6 +18,8 @@ public class LocationTracker implements LocationListener {
     private Context context;
     private LocationEventListener eventListener;
     private float currentSpeedKmh = 0f;
+    private Location lastLocation = null;
+    private long lastLocationTime = 0;
 
     // This interface is how LocationTracker talks back to TripActivity
     // TripActivity will implement it
@@ -58,13 +60,31 @@ public class LocationTracker implements LocationListener {
     // This fires automatically every time GPS gets a new position
     @Override
     public void onLocationChanged(Location location) {
+        long currentTime = System.currentTimeMillis();
+
+        // Try to use GPS speed first
         if (location.hasSpeed()) {
             currentSpeedKmh = location.getSpeed() * 3.6f; // convert m/s to km/h
-            eventListener.onSpeedUpdate(currentSpeedKmh);
+        } else if (lastLocation != null && lastLocationTime > 0) {
+            // Calculate speed from location delta when GPS speed unavailable
+            float distance = location.distanceTo(lastLocation); // meters
+            long timeDelta = currentTime - lastLocationTime; // milliseconds
 
-            if (currentSpeedKmh > SPEED_THRESHOLD_KMH) {
-                eventListener.onSpeedingDetected(currentSpeedKmh);
+            if (timeDelta > 0) {
+                float speedMps = distance / (timeDelta / 1000f);
+                currentSpeedKmh = speedMps * 3.6f;
             }
+        } else {
+            currentSpeedKmh = 0f;
+        }
+
+        lastLocation = location;
+        lastLocationTime = currentTime;
+
+        eventListener.onSpeedUpdate(currentSpeedKmh);
+
+        if (currentSpeedKmh > SPEED_THRESHOLD_KMH) {
+            eventListener.onSpeedingDetected(currentSpeedKmh);
         }
     }
 
