@@ -110,7 +110,7 @@ public class TripActivity extends AppCompatActivity
         locationTracker.stopTracking();
 
         int durationSeconds = (int)((SystemClock.elapsedRealtime() - tripStartTime) / 1000);
-        int score = new TripScorer().calculateScore(eventCount, durationSeconds);
+        int score = calculateScore(eventCount, durationSeconds);
         String persona = new PersonaManager().getPersona(score);
         String date = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(new Date());
 
@@ -132,5 +132,28 @@ public class TripActivity extends AppCompatActivity
         super.onPause();
         accelManager.stopListening();
         locationTracker.stopTracking();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        accelManager.startListening();
+
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+
+            locationTracker.startTracking();
+        }
+    }
+
+    public int calculateScore(int eventCount, int durationSeconds) {
+        int score = 100;
+        score -= eventCount * 8; // lose 8 points per harsh event
+        // Bonus: perfect trip over 5 minutes
+        if (eventCount == 0 && durationSeconds >= 300) score = 100;
+        return Math.max(0, score);
     }
 }
