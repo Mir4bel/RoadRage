@@ -23,7 +23,7 @@ public class ScoreBarChartView extends View {
     private void init() {
         barPaint.setStyle(Paint.Style.FILL);
         linePaint.setStyle(Paint.Style.STROKE);
-        linePaint.setStrokeWidth(dpToPx(0.5f));
+        linePaint.setStrokeWidth(dpToPx(0f));
         linePaint.setColor(Color.argb(40, 128, 128, 128));
     }
 

@@ -46,117 +46,101 @@
             android:id="@+id/btn_start_trip"
             android:layout_width="210dp"
             android:layout_height="210dp"
-            android:text="START"
             android:textSize="30dp"
-            android:fontFamily="sans-serif-medium"
+            android:padding="30dp"
             android:textColor="@color/md_theme_on_tertiary"
+            android:backgroundTint="#5CAA60"
             android:stateListAnimator="@null"
-            app:backgroundTint="@color/md_theme_on_surface_variant"
-            app:cornerRadius="105dp"
+            app:icon="@drawable/racing_flag_svgrepo_com"
+            app:iconGravity="top"
+            app:iconSize="150dp"
             app:elevation="12dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="START"
+            android:textSize="24dp"
+            />
 
     </LinearLayout>
 
-    <!-- Stats strip — persona + avg score, compact -->
-    <com.google.android.material.card.MaterialCardView
+
+    <!-- Stats row -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="0dp"
-        app:cardElevation="0dp"
-        app:strokeWidth="0dp"
-        app:strokeColor="?attr/colorOutlineVariant"
-        android:backgroundTint="@color/white">
+        android:orientation="horizontal"
+        android:padding="15dp"
+        android:layout_marginBottom="16dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="20dp">
+            android:layout_weight="1"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            android:backgroundTint="?attr/colorPrimaryContainer"
+            android:layout_marginEnd="8dp">
 
-            <!-- Persona card -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
-                android:layout_weight="1"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="135dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="0dp"
-                app:strokeWidth="0dp"
-                android:backgroundTint="?attr/colorSecondaryContainer"
-                android:layout_marginBottom="16dp"
-                android:layout_marginRight="16dp">
+                android:orientation="vertical"
+                android:padding="16dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="24dp">
+                    android:text="TRIPS"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.1"
+                    android:textColor="?attr/colorOnPrimaryContainer"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="YOUR PERSONA"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.1"
-                        android:textColor="?attr/colorOnSecondaryContainer"
-                        android:layout_marginBottom="8dp"/>
+                <TextView
+                    android:id="@+id/tv_total_trips_home"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="36sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="?attr/colorOnPrimaryContainer"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-                    <TextView
-                        android:id="@+id/tv_persona"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Unknown"
-                        android:textSize="28sp"
-                        android:fontFamily="sans-serif-medium"
-                        android:textColor="?attr/colorOnSecondaryContainer"/>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            android:backgroundTint="?attr/colorSecondaryContainer">
 
-
-
-            <!-- Avg score card -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/score_card"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="0dp"
-                app:strokeWidth="0dp"
-                android:backgroundTint="?attr/colorPrimaryContainer"
-                android:layout_marginBottom="32dp"
-                android:layout_marginRight="16dp">
+                android:orientation="vertical"
+                android:padding="16dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="24dp">
+                    android:text="AVG SCORE"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.1"
+                    android:textColor="?attr/colorOnSecondaryContainer"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="AVERAGE SCORE"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.1"
-                        android:textColor="?attr/colorOnPrimaryContainer"
-                        android:layout_marginBottom="8dp"/>
-
-                    <TextView
-                        android:id="@+id/tv_avg_score"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textSize="48sp"
-                        android:fontFamily="sans-serif-medium"
-                        android:textColor="?attr/colorOnPrimaryContainer"/>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
+                <TextView
+                    android:id="@+id/tv_avg_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="36sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="?attr/colorOnSecondaryContainer"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"

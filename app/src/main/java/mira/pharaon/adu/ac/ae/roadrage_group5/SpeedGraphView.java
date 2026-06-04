@@ -37,11 +37,11 @@ public class SpeedGraphView extends View {
 
         gridPaint.setStyle(Paint.Style.STROKE);
         gridPaint.setStrokeWidth(dpToPx(0.5f));
-        gridPaint.setColor(Color.argb(50, 128, 128, 128));
+        gridPaint.setColor(Color.argb(255, 0, 0, 0));
         gridPaint.setPathEffect(new DashPathEffect(new float[]{dpToPx(4), dpToPx(4)}, 0));
 
-        labelPaint.setTextSize(spToPx(9));
-        labelPaint.setColor(Color.argb(100, 128, 128, 128));
+        labelPaint.setTextSize(spToPx(13));
+        labelPaint.setColor(Color.argb(255, 0, 0, 0));
 
         dotPaint.setStyle(Paint.Style.FILL);
     }

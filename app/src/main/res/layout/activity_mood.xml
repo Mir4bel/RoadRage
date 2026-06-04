@@ -81,7 +81,7 @@
     <mira.pharaon.adu.ac.ae.roadrage_group5.MoodWheelView
         android:id="@+id/mood_wheel"
         android:layout_width="match_parent"
-        android:layout_height="170dp"
+        android:layout_height="260dp"
         android:paddingBottom="16dp"/>
 
 </LinearLayout>
