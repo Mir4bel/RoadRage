@@ -29,10 +29,10 @@ public class MoodActivity extends AppCompatActivity {
         MoodWheelView wheel = findViewById(R.id.mood_wheel);
         MaterialButton btnSave = findViewById(R.id.btn_save_mood);
 
-        // "Let's capture your mood today." — highlight the word "mood"
-        String full = "Let's capture your mood today.";
+        // "How are you feeling right now?" — highlight the word "feeling"
+        String full = "How are you feeling right now?";
         SpannableString ss = new SpannableString(full);
-        int s = full.indexOf("mood"), e = s + 4;
+        int s = full.indexOf("feeling"), e = s + 4;
         int accentColor = getColor(R.color.md_theme_tertiary);
         ss.setSpan(new ForegroundColorSpan(accentColor), s, e, 0);
         ss.setSpan(new StyleSpan(Typeface.BOLD), s, e, 0);

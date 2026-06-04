@@ -24,18 +24,24 @@
         android:gravity="center"
         android:paddingHorizontal="32dp">
 
-        <!-- "Let's capture your mood today." (colored in Java) -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Before you drive"
+            android:textSize="28sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="?attr/colorOnBackground"
+            android:layout_marginBottom="8dp"/>
+
         <TextView
             android:id="@+id/tv_mood_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Let's capture your mood today."
-            android:textSize="18sp"
-            android:fontFamily="sans-serif-medium"
-            android:textColor="?attr/colorOnBackground"
-            android:gravity="center"
-            android:layout_marginBottom="32dp"/>
-
+            android:text="How are you feeling right now?"
+            android:textSize="16sp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:layout_marginBottom="40dp"/>
         <!-- Big emoji — changes with wheel selection -->
         <TextView
             android:id="@+id/tv_selected_emoji"
@@ -43,15 +49,6 @@
             android:layout_height="wrap_content"
             android:text="😊"
             android:textSize="80sp"
-            android:layout_marginBottom="8dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Mood Indicator"
-            android:textSize="11sp"
-            android:letterSpacing="0.08"
-            android:textColor="?attr/colorOnSurfaceVariant"
             android:layout_marginBottom="8dp"/>
 
         <!-- "I'm Feeling Happy" — changes with selection -->
