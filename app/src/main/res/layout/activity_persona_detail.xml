@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- Colored header — background set programmatically -->
+    <FrameLayout
+        android:id="@+id/fl_persona_header"
+        android:layout_width="match_parent"
+        android:layout_height="230dp">
+
+        <!-- Back button -->
+        <ImageButton
+            android:id="@+id/btn_back_persona"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="top|start"
+            android:layout_margin="8dp"
+            android:src="@drawable/ic_arrow_back_24"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back"
+            app:tint="#CCFFFFFF" />
+
+        <!-- Center: emoji + name + range chip -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingTop="16dp">
+
+            <TextView
+                android:id="@+id/tv_detail_emoji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="72sp"
+                android:layout_marginBottom="6dp"/>
+
+            <TextView
+                android:id="@+id/tv_detail_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="28sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="#FFFFFF"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_score_range"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="80 – 100 pts"
+                android:textColor="#404040"
+                android:layout_marginTop="10dp"
+                app:chipBackgroundColor="#33FFFFFF"
+                app:chipStrokeColor="#66FFFFFF"
+                app:chipStrokeWidth="1dp"
+                app:ensureMinTouchTargetSize="false"/>
+
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- Scrollable content body -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="?attr/colorSurface">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Overview -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/colorOutlineVariant"
+                android:layout_marginBottom="12dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:padding="16dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="OVERVIEW" android:textSize="10sp" android:letterSpacing="0.12"
+                        android:textColor="?attr/colorOnSurfaceVariant" android:layout_marginBottom="8dp"/>
+                    <TextView android:id="@+id/tv_overview"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:textSize="15sp" android:textColor="?attr/colorOnSurface"
+                        android:lineSpacingMultiplier="1.55"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Traits -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/colorOutlineVariant"
+                android:layout_marginBottom="12dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:padding="16dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="TRAITS" android:textSize="10sp" android:letterSpacing="0.12"
+                        android:textColor="?attr/colorOnSurfaceVariant" android:layout_marginBottom="8dp"/>
+                    <TextView android:id="@+id/tv_traits"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:textSize="14sp" android:textColor="?attr/colorOnSurface"
+                        android:lineSpacingMultiplier="1.7"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Habits + Vibe -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/colorOutlineVariant"
+                android:layout_marginBottom="12dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:padding="16dp">
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="HABITS" android:textSize="10sp" android:letterSpacing="0.12"
+                        android:textColor="?attr/colorOnSurfaceVariant" android:layout_marginBottom="6dp"/>
+                    <TextView android:id="@+id/tv_habits"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:textSize="14sp" android:textColor="?attr/colorOnSurface"
+                        android:lineSpacingMultiplier="1.5" android:layout_marginBottom="16dp"/>
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="VIBE" android:textSize="10sp" android:letterSpacing="0.12"
+                        android:textColor="?attr/colorOnSurfaceVariant" android:layout_marginBottom="6dp"/>
+                    <TextView android:id="@+id/tv_vibe"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:textSize="15sp" android:fontFamily="sans-serif-medium"
+                        android:textColor="?attr/colorOnSurface" android:lineSpacingMultiplier="1.4"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Driver profiles -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="?attr/colorOutlineVariant"
+                android:layout_marginBottom="24dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:padding="16dp">
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="DRIVER PROFILES" android:textSize="10sp" android:letterSpacing="0.12"
+                        android:textColor="?attr/colorOnSurfaceVariant" android:layout_marginBottom="10dp"/>
+
+                    <TextView android:id="@+id/tv_profile_a"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:textSize="14sp" android:textColor="?attr/colorOnSurface"
+                        android:lineSpacingMultiplier="1.55" android:layout_marginBottom="12dp"/>
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp"
+                        android:background="?attr/colorOutlineVariant" android:layout_marginBottom="12dp"/>
+
+                    <TextView android:id="@+id/tv_profile_b"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:textSize="14sp" android:textColor="?attr/colorOnSurface"
+                        android:lineSpacingMultiplier="1.55"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

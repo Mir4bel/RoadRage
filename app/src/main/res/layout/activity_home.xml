@@ -49,7 +49,7 @@
             android:textSize="30dp"
             android:padding="30dp"
             android:textColor="@color/md_theme_on_tertiary"
-            android:backgroundTint="#5CAA60"
+            android:backgroundTint="#63D8A8"
             android:stateListAnimator="@null"
             app:icon="@drawable/racing_flag_svgrepo_com"
             app:iconGravity="top"
@@ -59,68 +59,100 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="START"
+            android:text="START TRIP"
             android:textSize="24dp"
+            android:padding="10dp"
             />
 
     </LinearLayout>
 
-
-    <!-- Stats row -->
-    <LinearLayout
+    <!-- TIP CARD (visible by default, dismissed per-day) -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_tip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="15dp"
-        android:layout_marginBottom="16dp">
+        app:cardCornerRadius="0dp"
+        app:cardElevation="0dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="?attr/colorOutlineVariant"
+        android:backgroundTint="?attr/colorSurfaceVariant">
 
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            android:backgroundTint="?attr/colorPrimaryContainer"
-            android:layout_marginEnd="8dp">
+            android:orientation="vertical"
+            android:padding="16dp">
 
+            <!-- Header row: label + tip number + dismiss button -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="TRIPS"
-                    android:textSize="10sp"
+                    android:layout_weight="1"
+                    android:text="TIP OF THE DAY"
+                    android:textSize="16dp"
                     android:letterSpacing="0.1"
-                    android:textColor="?attr/colorOnPrimaryContainer"/>
+                    android:textColor="?attr/colorOnSurfaceVariant"/>
 
                 <TextView
-                    android:id="@+id/tv_total_trips_home"
+                    android:id="@+id/tv_tip_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textSize="36sp"
-                    android:fontFamily="sans-serif-medium"
-                    android:textColor="?attr/colorOnPrimaryContainer"/>
+                    android:textSize="18dp"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:layout_marginEnd="8dp"/>
+
+                <ImageButton
+                    android:id="@+id/btn_dismiss_tip"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_close_24"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Dismiss"/>
+
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            android:backgroundTint="?attr/colorSecondaryContainer">
-
-            <LinearLayout
+            <!-- Tip text -->
+            <TextView
+                android:id="@+id/tv_tip_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:textSize="13sp"
+                android:textColor="?attr/colorOnSurface"
+                android:lineSpacingMultiplier="1.45"/>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- STATS CARD (hidden until tip is dismissed) -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_stats"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="0dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="?attr/colorOutlineVariant">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="20dp">
+
+            <!-- Avg score -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -128,19 +160,67 @@
                     android:text="AVG SCORE"
                     android:textSize="10sp"
                     android:letterSpacing="0.1"
-                    android:textColor="?attr/colorOnSecondaryContainer"/>
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:layout_marginBottom="3dp"/>
 
                 <TextView
                     android:id="@+id/tv_avg_score"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
-                    android:textSize="36sp"
+                    android:textSize="28sp"
                     android:fontFamily="sans-serif-medium"
-                    android:textColor="?attr/colorOnSecondaryContainer"/>
+                    android:textColor="?attr/colorOnSurface"/>
+
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-    </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="?attr/colorOutlineVariant"
+                android:layout_marginHorizontal="16dp"/>
+
+            <!-- Persona -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PERSONA"
+                    android:textSize="10sp"
+                    android:letterSpacing="0.1"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:layout_marginBottom="3dp"/>
+
+                <TextView
+                    android:id="@+id/tv_persona"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="—"
+                    android:textSize="17sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="?attr/colorOnSurface"/>
+
+                <!-- Progress to next tier -->
+                <TextView
+                    android:id="@+id/tv_next_tier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="11sp"
+                    android:textColor="?attr/colorTertiary"
+                    android:layout_marginTop="3dp"/>
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"

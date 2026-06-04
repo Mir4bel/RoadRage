@@ -14,17 +14,39 @@ import java.util.List;
 public class ScoreBarChartView extends View {
 
     private final List<Integer> scores = new ArrayList<>();
-    private final Paint barPaint  = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Paint linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+    private final Paint barPaint    = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint gridPaint   = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint labelPaint  = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint axisPaint   = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint xLabelPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+    private static final int[]   Y_MARKS     = {0, 25, 50, 75, 100};
+    private static final float   AXIS_W_DP   = 36f;
+    private static final float   PAD_TOP_DP  = 6f;
+    private static final float   PAD_BOT_DP  = 18f;
 
     public ScoreBarChartView(Context c)                     { super(c);       init(); }
     public ScoreBarChartView(Context c, AttributeSet attrs) { super(c, attrs); init(); }
 
     private void init() {
         barPaint.setStyle(Paint.Style.FILL);
-        linePaint.setStyle(Paint.Style.STROKE);
-        linePaint.setStrokeWidth(dpToPx(0f));
-        linePaint.setColor(Color.argb(40, 128, 128, 128));
+
+        gridPaint.setStyle(Paint.Style.STROKE);
+        gridPaint.setStrokeWidth(dpToPx(0.5f));
+        gridPaint.setColor(Color.argb(50, 128, 128, 128));
+
+        axisPaint.setStyle(Paint.Style.STROKE);
+        axisPaint.setStrokeWidth(dpToPx(1));
+        axisPaint.setColor(Color.argb(80, 128, 128, 128));
+
+        labelPaint.setTextSize(spToPx(9));
+        labelPaint.setTextAlign(Paint.Align.RIGHT);
+        labelPaint.setColor(Color.argb(130, 100, 100, 100));
+
+        xLabelPaint.setTextSize(spToPx(8));
+        xLabelPaint.setTextAlign(Paint.Align.CENTER);
+        xLabelPaint.setColor(Color.argb(90, 100, 100, 100));
     }
 
     public void setScores(List<Integer> data) {
@@ -35,38 +57,63 @@ public class ScoreBarChartView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (scores.isEmpty()) return;
         float w = getWidth(), h = getHeight();
 
-        // Baseline guide at 60 and 80
-        for (float mark : new float[]{60, 80}) {
-            float y = h - (mark / 100f) * h;
-            canvas.drawLine(0, y, w, y, linePaint);
+        float axisW  = dpToPx(AXIS_W_DP);
+        float padTop = dpToPx(PAD_TOP_DP);
+        float padBot = dpToPx(PAD_BOT_DP);
+
+        float gLeft   = axisW;
+        float gTop    = padTop;
+        float gRight  = w;
+        float gBottom = h - padBot;
+        float gH      = gBottom - gTop;
+        float gW      = gRight - gLeft;
+
+        // Y-axis grid lines and labels
+        for (int mark : Y_MARKS) {
+            float y = gBottom - (mark / 100f) * gH;
+            canvas.drawLine(gLeft, y, gRight, y, gridPaint);
+            canvas.drawText(String.valueOf(mark), axisW - dpToPx(4), y + spToPx(3.5f), labelPaint);
         }
 
+        // Y-axis border line
+        canvas.drawLine(gLeft, gTop, gLeft, gBottom, axisPaint);
+
+        if (scores.isEmpty()) return;
+
         int count = scores.size();
-        float gap     = dpToPx(4);
-        float barW    = (w - gap * (count + 1)) / count;
-        float cornerR = dpToPx(4);
+        float gap  = dpToPx(4);
+        float barW = (gW - gap * (count + 1)) / count;
+        float r    = dpToPx(4);
 
         for (int i = 0; i < count; i++) {
             int score = scores.get(i);
-            float barH = (score / 100f) * h;
-            float left = gap + i * (barW + gap);
-            RectF rect = new RectF(left, h - barH, left + barW, h);
+            float barH  = (score / 100f) * gH;
+            float left  = gLeft + gap + i * (barW + gap);
+            float top   = gBottom - barH;
+            float right = left + barW;
+
             barPaint.setColor(scoreColor(score));
-            canvas.drawRoundRect(rect, cornerR, cornerR, barPaint);
+            canvas.drawRoundRect(new RectF(left, top, right, gBottom), r, r, barPaint);
+
+            // Trip number below bar
+            float xCenter = left + barW / 2f;
+            canvas.drawText(String.valueOf(i + 1), xCenter, h - dpToPx(4), xLabelPaint);
         }
     }
 
     private int scoreColor(int score) {
-        if (score >= 80) return Color.parseColor("#006A6C"); // teal
-        if (score >= 60) return Color.parseColor("#1565C0"); // blue
-        if (score >= 40) return Color.parseColor("#E65100"); // orange
-        return                  Color.parseColor("#B71C1C"); // red
+        if (score >= 80) return Color.parseColor("#00695C");
+        if (score >= 60) return Color.parseColor("#1565C0");
+        if (score >= 40) return Color.parseColor("#E65100");
+        return                  Color.parseColor("#B71C1C");
     }
 
     private float dpToPx(float dp) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
+    }
+    private float spToPx(float sp) {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, getResources().getDisplayMetrics());
     }
 }

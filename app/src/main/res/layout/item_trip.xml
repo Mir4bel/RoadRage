@@ -7,6 +7,7 @@
     app:cardCornerRadius="16dp"
     app:cardElevation="0dp"
     app:strokeWidth="1dp"
+    android:backgroundTint="#963969"
     app:strokeColor="?attr/colorOutlineVariant"
     android:layout_marginBottom="12dp">
 
@@ -36,8 +37,7 @@
                     android:layout_height="wrap_content"
                     android:text="May 27, 2026"
                     android:textSize="14sp"
-                    android:fontFamily="sans-serif-medium"
-                    android:textColor="?attr/colorOnBackground" />
+                    android:textColor="#FFE5E5" />
 
                 <TextView
                     android:id="@+id/tv_trip_persona"
@@ -45,7 +45,7 @@
                     android:layout_height="wrap_content"
                     android:text="Zen Driver"
                     android:textSize="13sp"
-                    android:textColor="?attr/colorOnSurfaceVariant" />
+                    android:textColor="#FFE5E5" />
 
                 <TextView
                     android:id="@+id/tv_trip_mood"
@@ -53,9 +53,10 @@
                     android:layout_height="wrap_content"
                     android:text="😊 Happy"
                     android:textSize="12sp"
-                    android:textColor="?attr/colorOnSurfaceVariant" />
+                    android:textColor="#FFE5E5" />
 
             </LinearLayout>
+
 
             <TextView
                 android:id="@+id/tv_trip_score"
@@ -63,8 +64,8 @@
                 android:layout_height="wrap_content"
                 android:text="100"
                 android:textSize="32sp"
-                android:fontFamily="sans-serif-medium"
-                android:textColor="?attr/colorPrimary" />
+                android:textColor="#FFE5E5" />
+
 
         </LinearLayout>
 
@@ -73,8 +74,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="View route →"
-            android:textSize="11sp"
-            android:textColor="?attr/colorPrimary"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:textColor="#E9D89A"
             android:paddingStart="16dp"
             android:paddingBottom="12dp" />
 

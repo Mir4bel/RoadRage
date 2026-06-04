@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -14,18 +15,26 @@ import java.util.List;
 
 public class SpeedGraphView extends View {
 
-    private final List<Float> history = new ArrayList<>();
-    private static final int   MAX_POINTS   = 60;
-    private static final float MAX_SPEED_KH = 160f;
+    private final List<Float> history    = new ArrayList<>();
+    private static final int   MAX_PTS   = 60;
+    private static final float MAX_SPEED = 160f;
+
+    // Layout constants (dp)
+    private static final float AXIS_L_DP  = 44f;  // left axis width
+    private static final float PAD_TOP_DP =  8f;
+    private static final float PAD_BOT_DP = 22f;  // bottom padding keeps zero visible
+    private static final float PAD_R_DP   =  6f;
 
     private final Paint linePaint  = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint fillPaint  = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint gridPaint  = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint borderPaint= new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint labelPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint basePaint  = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint dotPaint   = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-    public SpeedGraphView(Context context)                     { super(context);       init(); }
-    public SpeedGraphView(Context context, AttributeSet attrs) { super(context, attrs); init(); }
+    public SpeedGraphView(Context c)                     { super(c);       init(); }
+    public SpeedGraphView(Context c, AttributeSet attrs) { super(c, attrs); init(); }
 
     private void init() {
         linePaint.setStyle(Paint.Style.STROKE);
@@ -37,77 +46,129 @@ public class SpeedGraphView extends View {
 
         gridPaint.setStyle(Paint.Style.STROKE);
         gridPaint.setStrokeWidth(dpToPx(0.5f));
-        gridPaint.setColor(Color.argb(255, 0, 0, 0));
+        gridPaint.setColor(Color.argb(40, 128, 128, 128));
         gridPaint.setPathEffect(new DashPathEffect(new float[]{dpToPx(4), dpToPx(4)}, 0));
 
-        labelPaint.setTextSize(spToPx(13));
-        labelPaint.setColor(Color.argb(255, 0, 0, 0));
+        borderPaint.setStyle(Paint.Style.STROKE);
+        borderPaint.setStrokeWidth(dpToPx(1f));
+        borderPaint.setColor(Color.argb(70, 128, 128, 128));
+
+        labelPaint.setTextSize(spToPx(8.5f));
+        labelPaint.setColor(Color.argb(120, 100, 100, 100));
+        labelPaint.setTextAlign(Paint.Align.RIGHT);
+
+        // Baseline (zero speed) — slightly thicker grid line
+        basePaint.setStyle(Paint.Style.STROKE);
+        basePaint.setStrokeWidth(dpToPx(1.5f));
+        basePaint.setColor(Color.argb(80, 100, 100, 100));
 
         dotPaint.setStyle(Paint.Style.FILL);
     }
 
-    /** Called by TripActivity on every GPS update */
     public void addSpeedReading(float speedKmh) {
-        history.add(Math.min(speedKmh, MAX_SPEED_KH));
-        if (history.size() > MAX_POINTS) history.remove(0);
+        history.add(Math.min(speedKmh, MAX_SPEED));
+        if (history.size() > MAX_PTS) history.remove(0);
         invalidate();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        int w = getWidth(), h = getHeight();
-        drawGrid(canvas, w, h);
-        if (history.size() < 2) return;
+        float w = getWidth(), h = getHeight();
 
-        // X: right-anchored — latest reading is at x = width
-        // Each point occupies w/(MAX_POINTS-1) pixels
-        float xStep = (float) w / (MAX_POINTS - 1);
-        int   count = history.size();
-        float xStart = (MAX_POINTS - count) * xStep; // where the first visible point starts
+        float axisL  = dpToPx(AXIS_L_DP);
+        float padT   = dpToPx(PAD_TOP_DP);
+        float padB   = dpToPx(PAD_BOT_DP);
+        float padR   = dpToPx(PAD_R_DP);
 
-        // Build fill path
+        float gLeft   = axisL;
+        float gTop    = padT;
+        float gRight  = w - padR;
+        float gBottom = h - padB; // zero speed maps here — NOT h, so it stays visible
+        float gH      = gBottom - gTop;
+        float gW      = gRight - gLeft;
+
+        // ─── Grid lines and Y-axis labels ────────────────────────────────────
+        float[] speedMarks = {0, 40, 80, 120};
+        for (float mark : speedMarks) {
+            float y = gBottom - (mark / MAX_SPEED) * gH;
+
+            if (mark == 0) {
+                // Baseline: draw it a bit more prominently
+                canvas.drawLine(gLeft, y, gRight, y, basePaint);
+            } else {
+                canvas.drawLine(gLeft, y, gRight, y, gridPaint);
+            }
+
+            // Number label
+            canvas.drawText(String.valueOf((int) mark), axisL - dpToPx(5), y + spToPx(3.5f), labelPaint);
+        }
+
+        // "km/h" label — rotated on left axis
+        canvas.save();
+        float axisLabelX = dpToPx(9);
+        float axisLabelY = (gTop + gBottom) / 2f;
+        canvas.rotate(-90, axisLabelX, axisLabelY);
+        labelPaint.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText("km/h", axisLabelX, axisLabelY + spToPx(3.5f), labelPaint);
+        canvas.restore();
+        labelPaint.setTextAlign(Paint.Align.RIGHT); // restore
+
+        // ─── Border rect ─────────────────────────────────────────────────────
+        canvas.drawRect(new RectF(gLeft, gTop, gRight, gBottom), borderPaint);
+
+        // ─── Empty state ──────────────────────────────────────────────────────
+        if (history.size() < 2) {
+            // Show a pulsing dot at the zero baseline so user knows the graph is active
+            float dotX = gLeft + dpToPx(12);
+            dotPaint.setColor(Color.parseColor("#2196F3"));
+            dotPaint.setAlpha(160);
+            canvas.drawCircle(dotX, gBottom, dpToPx(4), dotPaint);
+            dotPaint.setAlpha(255);
+            return;
+        }
+
+        // ─── Speed history line and fill ─────────────────────────────────────
+        int count = history.size();
+        // Right-anchored: latest reading is at x = gRight
+        float xStep  = gW / (MAX_PTS - 1);
+        float xStart = gLeft + (MAX_PTS - count) * xStep;
+
+        // Fill path
         Path fill = new Path();
-        fill.moveTo(xStart, h);
-        for (int i = 0; i < count; i++) {
+        float x0 = xStart, y0 = gBottom - (history.get(0) / MAX_SPEED) * gH;
+        fill.moveTo(x0, gBottom);
+        fill.lineTo(x0, y0);
+        for (int i = 1; i < count; i++) {
             float x = xStart + i * xStep;
-            float y = h - (history.get(i) / MAX_SPEED_KH) * h;
+            float y = gBottom - (history.get(i) / MAX_SPEED) * gH;
             fill.lineTo(x, y);
         }
-        fill.lineTo(xStart + (count - 1) * xStep, h);
+        fill.lineTo(xStart + (count - 1) * xStep, gBottom);
         fill.close();
 
-        float latest = history.get(count - 1);
-        fillPaint.setColor(speedColor(latest));
-        fillPaint.setAlpha(45);
+        fillPaint.setColor(speedColor(history.get(count - 1)));
+        fillPaint.setAlpha(40);
         canvas.drawPath(fill, fillPaint);
 
-        // Draw line segments, each colored by its speed value
+        // Line (segment-by-segment so each segment can have its own speed color)
         for (int i = 1; i < count; i++) {
             float x1 = xStart + (i - 1) * xStep;
-            float y1 = h - (history.get(i - 1) / MAX_SPEED_KH) * h;
+            float y1 = gBottom - (history.get(i - 1) / MAX_SPEED) * gH;
             float x2 = xStart + i * xStep;
-            float y2 = h - (history.get(i) / MAX_SPEED_KH) * h;
+            float y2 = gBottom - (history.get(i) / MAX_SPEED) * gH;
             linePaint.setColor(speedColor(history.get(i)));
             canvas.drawLine(x1, y1, x2, y2, linePaint);
         }
 
         // Live dot at the current position
-        float dotX = xStart + (count - 1) * xStep;
-        float dotY = h - (latest / MAX_SPEED_KH) * h;
+        float latest = history.get(count - 1);
+        float dotX   = xStart + (count - 1) * xStep;
+        float dotY   = gBottom - (latest / MAX_SPEED) * gH;
         dotPaint.setColor(speedColor(latest));
         canvas.drawCircle(dotX, dotY, dpToPx(5), dotPaint);
         dotPaint.setAlpha(55);
         canvas.drawCircle(dotX, dotY, dpToPx(9), dotPaint);
         dotPaint.setAlpha(255);
-    }
-
-    private void drawGrid(Canvas canvas, int w, int h) {
-        float[] marks = {40, 80, 120};
-        for (float s : marks) {
-            float y = h - (s / MAX_SPEED_KH) * h;
-            canvas.drawLine(0, y, w, y, gridPaint);
-            canvas.drawText((int) s + " km/h", dpToPx(6), y - dpToPx(2), labelPaint);
-        }
     }
 
     private int speedColor(float kmh) {

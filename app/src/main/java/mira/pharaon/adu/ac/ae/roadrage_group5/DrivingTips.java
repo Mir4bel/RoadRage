@@ -1,0 +1,110 @@
+package mira.pharaon.adu.ac.ae.roadrage_group5;
+
+import java.util.Calendar;
+import java.util.Random;
+
+public class DrivingTips {
+
+    public static final String[] TIPS = {
+            "Look further down the road than the vehicle directly in front of you. Scanning 3–5 seconds ahead gives you more time to react to sudden braking, lane changes, or unexpected hazards.",
+            "Keep your hands at the 9 and 3 o'clock positions on the steering wheel. This provides better control during emergency maneuvers and reduces the risk of injury if the airbag deploys.",
+            "Make steering inputs smooth and deliberate. Sudden movements at higher speeds can unsettle the vehicle and increase the risk of losing control.",
+            "Signal your intentions early. Giving other road users at least a few seconds of warning makes traffic flow more predictable and safer for everyone.",
+            "Accelerate progressively rather than flooring the pedal. Smooth acceleration improves comfort, reduces wear on your vehicle, and can help save fuel.",
+            "Before every lane change, check your mirrors and then perform a quick shoulder check. Blind spots can hide vehicles, motorcycles, or cyclists.",
+            "Drive according to the conditions, not just the speed limit. Rain, fog, sand, heavy traffic, or poor visibility may require you to slow down significantly.",
+            "Adjust your seat before starting your journey. A proper seating position improves comfort, visibility, and control of the vehicle.",
+            "Set all mirrors correctly before moving off. Proper mirror adjustment reduces blind spots and improves awareness of surrounding traffic.",
+            "Wear your seatbelt every time you drive, even on short trips. A seatbelt remains one of the most effective safety features in any vehicle.",
+            "Keep both hands on the wheel whenever possible. Maintaining full control allows you to react more quickly to unexpected situations.",
+            "Start every journey calmly and build speed gradually. Rushing in the first few minutes often leads to mistakes and poor decision-making.",
+            "Leave at least a 2–3 second gap between your vehicle and the one ahead in city traffic. This gives you enough time to react if traffic suddenly slows.",
+            "Avoid weaving between lanes to gain a few car lengths. Frequent lane changes increase risk and rarely save meaningful time.",
+            "Check your mirrors regularly while driving. Developing this habit helps you maintain constant awareness of vehicles around you.",
+            "Stay alert for pedestrians, especially near schools, shopping areas, mosques, and residential neighborhoods.",
+            "Watch carefully for cyclists, delivery riders, and e-scooters in urban areas. They can be harder to spot than larger vehicles.",
+            "Move into dedicated turn lanes early. Last-second lane changes are a common cause of collisions and traffic disruptions.",
+            "Come to a complete stop at stop signs and red lights. Rolling through intersections reduces your ability to spot hazards.",
+            "Understand and respect right-of-way rules. Many collisions occur because drivers incorrectly assume other vehicles will yield.",
+            "Use the parking brake when parking on slopes. It reduces strain on the transmission and helps prevent vehicle movement.",
+            "Park only in designated areas and check local restrictions. Illegal parking can create hazards and result in fines.",
+            "When reversing, use a combination of mirrors, cameras, and direct observation. Technology should assist your awareness, not replace it.",
+            "Walk around your vehicle before reversing if visibility is limited. Children, pets, or small obstacles may be hidden from view.",
+            "Take your time while parking. A few extra seconds is better than damaging your vehicle or someone else's.",
+            "Practice difficult parking maneuvers in quiet areas. Confidence comes from repetition, not rushing.",
+            "Center your vehicle within parking bay lines. Proper positioning helps prevent door damage and makes exiting easier.",
+            "Use parking sensors and cameras as helpful tools, but always verify with your own observations.",
+            "On highways, maintain a larger following distance than you would in city traffic. Higher speeds require more time and distance to stop safely.",
+            "Match the speed of traffic before merging onto a highway. Entering too slowly can be just as dangerous as entering too quickly.",
+            "Use the full length of the acceleration lane when available. It provides valuable space to safely match traffic speed.",
+            "Signal well before changing lanes on a highway. At higher speeds, other drivers need more time to react.",
+            "Perform a shoulder check before every highway lane change. Mirrors alone cannot eliminate blind spots.",
+            "Keep right unless overtaking. This improves traffic flow and reduces unnecessary conflicts with faster vehicles.",
+            "Avoid driving alongside large trucks for extended periods. Trucks have significant blind spots and require more space to maneuver.",
+            "Never overtake where visibility is restricted, such as on curves, hills, or areas with unclear sightlines.",
+            "Plan your exit in advance. Last-second lane changes near exits create unnecessary danger for everyone.",
+            "Stay within your lane and avoid zigzag driving. Consistency helps other drivers predict your actions.",
+            "If a faster vehicle approaches from behind, allow it to pass when safe. Creating unnecessary conflicts benefits no one.",
+            "At night, reduce your speed slightly to compensate for decreased visibility and longer reaction times.",
+            "Keep your windshield clean inside and out. Dirt, dust, and smears become far more distracting after dark.",
+            "Use low beams whenever you are near other vehicles. High beams can temporarily blind oncoming drivers.",
+            "Avoid staring directly at bright headlights. Instead, focus slightly toward the edge of your lane until the vehicle passes.",
+            "Keep dashboard lighting dim enough to preserve your night vision while remaining easy to read.",
+            "Take breaks more frequently during nighttime journeys. Fatigue is often harder to recognize after dark.",
+            "Inspect your headlights, brake lights, and indicators regularly. Good lighting helps you see and be seen.",
+            "Use reflective lane markings as guidance when visibility is reduced. They can help maintain proper lane position.",
+            "During rain, increase your following distance significantly. Wet roads require longer stopping distances.",
+            "Reduce speed whenever roads become wet. Even modern safety systems cannot overcome the laws of physics.",
+            "Avoid using cruise control on slippery roads. Manual control allows faster reactions if traction is lost.",
+            "Turn on your headlights during rain, fog, or poor visibility conditions. Being seen is just as important as seeing.",
+            "Avoid driving through deep puddles whenever possible. Hidden hazards and hydroplaning can occur unexpectedly.",
+            "After driving through standing water, gently test your brakes to confirm they are working properly.",
+            "If visibility becomes dangerously poor, pull over in a safe location and wait for conditions to improve.",
+            "In the UAE, be especially cautious during sandstorms. Reduce speed, increase following distance, and use headlights to improve visibility.",
+            "If visibility is severely reduced by blowing sand, leave the road safely and wait until conditions improve.",
+            "During extreme summer heat, check tire pressures regularly. High temperatures can increase tire stress and affect handling.",
+            "Never leave children or pets unattended in a parked vehicle. Temperatures inside a car can become dangerous within minutes.",
+            "Keep water in your vehicle, particularly during long journeys in hot weather.",
+            "Use air conditioning wisely during summer months. Driver fatigue increases significantly when the cabin becomes too hot.",
+            "Maintain a steady speed whenever traffic conditions allow. Constant acceleration and braking wastes fuel and increases wear.",
+            "Look ahead and anticipate traffic flow. Early observation allows smoother driving and fewer unnecessary stops.",
+            "Remove unnecessary weight from your vehicle. Extra cargo increases fuel consumption and reduces efficiency.",
+            "Keep your tires properly inflated. Correct tire pressure improves fuel economy, handling, and tire lifespan.",
+            "Combine multiple errands into one trip whenever practical. This reduces fuel use and vehicle wear.",
+            "Turn off the engine during long waits when safe and appropriate. Excessive idling wastes fuel.",
+            "Avoid distractions while driving. A moment of inattention can have consequences that last a lifetime.",
+            "Set up navigation, music, and climate controls before moving off. Adjusting them while driving divides your attention.",
+            "Stay calm when traffic becomes frustrating. Aggressive driving often creates more risk than benefit.",
+            "Treat every other road user with patience and respect. Courtesy contributes to a safer driving environment.",
+            "Practice defensive driving. Assume other drivers may make mistakes and always leave yourself an escape option.",
+            "Never engage with aggressive drivers. Create space and allow them to move away from you.",
+            "Keep an emergency kit in your vehicle. Water, a flashlight, a first-aid kit, and a phone charger can be invaluable.",
+            "Know your route before departing. Familiarity reduces stress and minimizes last-minute decisions.",
+            "Carry your driving licence and required vehicle documents whenever you drive.",
+            "Inspect your vehicle regularly. Small maintenance issues can become serious safety problems if ignored.",
+            "Keep windows, mirrors, and lights clean. Visibility is one of the most important factors in safe driving.",
+            "Wear suitable footwear while driving. Shoes that slip or interfere with pedal control increase risk.",
+            "Take a break at least every two hours on long journeys. Fatigue can impair judgment as much as alcohol.",
+            "Stay hydrated, especially during long drives in hot weather. Dehydration can affect concentration and reaction times.",
+            "Learn from mistakes and near-misses. Every experience on the road is an opportunity to improve your skills.",
+            "Stay informed about traffic laws and road safety updates. Good drivers never stop learning.",
+            "Drive predictably so others can anticipate your actions. Consistency reduces confusion and lowers the risk of collisions.",
+            "Use hazard lights appropriately, such as when stopped due to an emergency or when visibility is severely reduced.",
+            "Remain calm under pressure. Clear thinking leads to better decisions during unexpected situations.",
+            "The safest drivers are not necessarily the fastest or most skilled — they are the ones who consistently make good decisions before problems develop."
+    };
+
+    private static Random random = new Random();
+
+    /** Returns random tip*/
+    public static String getTodaysTip() {
+        int randomTip = random.nextInt(83);
+        return TIPS[randomTip % TIPS.length];
+    }
+
+//    /** Returns which tip number is showing today (1-indexed, for display) */
+//    public static int getTodaysTipNumber() {
+//        int dayOfYear = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
+//        return (dayOfYear % TIPS.length) + 1;
+//    }
+}

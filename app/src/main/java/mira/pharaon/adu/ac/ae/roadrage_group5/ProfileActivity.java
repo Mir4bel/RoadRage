@@ -1,17 +1,20 @@
 package mira.pharaon.adu.ac.ae.roadrage_group5;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.card.MaterialCardView;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +46,20 @@ public class ProfileActivity extends BaseActivity {
         } else {
             tvPersona.setText("—  No trips yet");
         }
+
+        // Make the persona card tappable — opens the detail screen
+        tvPersona.setOnClickListener(v -> {
+            String currentPersona = stats[1];
+            if (!currentPersona.equals("Unknown")) {
+                Intent intent = new Intent(this, PersonaDetailActivity.class);
+                intent.putExtra("persona", currentPersona);
+                startActivity(intent);
+            }
+        });
+
+
+        // Visual hint: underline + clickable indicator
+        tvPersona.setPaintFlags(tvPersona.getPaintFlags() | android.graphics.Paint.UNDERLINE_TEXT_FLAG);
 
         // ─── Score trend chart ────────────────────────────────────────────────
         ScoreBarChartView chart = findViewById(R.id.score_chart);
