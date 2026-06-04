@@ -7,16 +7,17 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.widget.Button;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-// TripActivity implements both listener interfaces
 public class TripActivity extends AppCompatActivity
         implements AccelerometerManager.AccelerometerEventListener,
         LocationTracker.LocationEventListener {
@@ -29,9 +30,8 @@ public class TripActivity extends AppCompatActivity
     private long tripStartTime;
     private String selectedMood;
 
-    // We collect events here during the trip, save them to DB on stop
-    private List<float[]> harshEvents = new ArrayList<>();
-    // float[] = {severity, type_as_number} — simple enough for now
+    // GPS points collected during the trip — flushed to DB in stopTrip()
+    private final List<double[]> locationPoints = new ArrayList<>(); // [lat, lng, speed_kmh]
 
     private static final int LOCATION_PERMISSION_REQUEST = 100;
 
@@ -40,18 +40,15 @@ public class TripActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip);
 
-        // Get mood passed from MoodActivity
         selectedMood = getIntent().getStringExtra("mood");
 
         tvEventCount = findViewById(R.id.tv_event_count);
         tvSpeed      = findViewById(R.id.tv_speed);
         Button btnStop = findViewById(R.id.btn_stop_trip);
 
-        // Create sensor managers — 'this' works because we implement both interfaces
         accelManager    = new AccelerometerManager(this, this);
         locationTracker = new LocationTracker(this, this);
 
-        // Request location permission if not already granted
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
@@ -67,66 +64,84 @@ public class TripActivity extends AppCompatActivity
         btnStop.setOnClickListener(v -> stopTrip());
     }
 
-    // Fires when Android shows the permission dialog and user responds
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == LOCATION_PERMISSION_REQUEST &&
-                grantResults.length > 0 &&
-                grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == LOCATION_PERMISSION_REQUEST
+                && grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             locationTracker.startTracking();
         }
     }
 
-    // Called by AccelerometerManager when a harsh event is detected
+    // ─── AccelerometerManager callbacks ──────────────────────────────────────
+
     @Override
     public void onHarshEvent(String type, float severity) {
         eventCount++;
-        harshEvents.add(new float[]{severity});
-        runOnUiThread(() ->
-                tvEventCount.setText(String.valueOf(eventCount))
-        );
+        runOnUiThread(() -> tvEventCount.setText(String.valueOf(eventCount)));
     }
 
-    // Called by LocationTracker every 2 seconds
+    // ─── LocationTracker callbacks ────────────────────────────────────────────
+
     @Override
     public void onSpeedUpdate(float speedKmh) {
-        runOnUiThread(() ->
-                tvSpeed.setText(String.format(Locale.getDefault(), "%.0f km/h", speedKmh))
-        );
+        // Speed UI is now handled in onLocationUpdate; this satisfies the interface.
     }
 
-    // Called by LocationTracker if speed exceeds threshold
+    @Override
+    public void onLocationUpdate(double lat, double lng, float speedKmh) {
+        // Collect every GPS fix for the map
+        locationPoints.add(new double[]{lat, lng, speedKmh});
+        runOnUiThread(() ->
+                tvSpeed.setText(String.format(Locale.getDefault(), "%.0f km/h", speedKmh)));
+    }
+
     @Override
     public void onSpeedingDetected(float speedKmh) {
         eventCount++;
-        runOnUiThread(() ->
-                tvEventCount.setText(String.valueOf(eventCount))
-        );
+        runOnUiThread(() -> tvEventCount.setText(String.valueOf(eventCount)));
     }
+
+    // ─── Trip lifecycle ───────────────────────────────────────────────────────
 
     private void stopTrip() {
         accelManager.stopListening();
         locationTracker.stopTracking();
 
-        int durationSeconds = (int)((SystemClock.elapsedRealtime() - tripStartTime) / 1000);
-        int score = calculateScore(eventCount, durationSeconds);
+        int durationSeconds = (int) ((SystemClock.elapsedRealtime() - tripStartTime) / 1000);
+        int score    = calculateScore(eventCount, durationSeconds);
         String persona = new PersonaManager().getPersona(score);
-        String date = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(new Date());
 
-        // Pass results to ResultActivity
+        // Date now includes time so History shows when exactly each trip happened
+        String date = new SimpleDateFormat("MMM dd, yyyy · HH:mm", Locale.getDefault())
+                .format(new Date());
+
+        // Save trip and all its GPS points to the database
+        // NOTE: remove db.insertTrip() and db.updateUserStats() from ResultActivity
+        //       — they are now handled here to avoid double-saving.
+        DatabaseManager db = new DatabaseManager(this);
+        long tripId = db.insertTrip(date, durationSeconds, score, selectedMood, eventCount, persona);
+
+        for (double[] point : locationPoints) {
+            db.insertLocation(tripId, point[0], point[1], (float) point[2]);
+        }
+
+        db.updateUserStats(this);
+
+        // Pass tripId so ResultActivity can show a "View on Map" button if desired
         Intent intent = new Intent(this, ResultActivity.class);
-        intent.putExtra("score", score);
-        intent.putExtra("persona", persona);
-        intent.putExtra("mood", selectedMood);
-        intent.putExtra("duration", durationSeconds);
+        intent.putExtra("score",      score);
+        intent.putExtra("persona",    persona);
+        intent.putExtra("mood",       selectedMood);
+        intent.putExtra("duration",   durationSeconds);
         intent.putExtra("eventCount", eventCount);
-        intent.putExtra("date", date);
+        intent.putExtra("date",       date);
+        intent.putExtra("tripId",     tripId);
         startActivity(intent);
         finish();
     }
 
-    // IMPORTANT: stop sensors if the app goes to background
     @Override
     protected void onPause() {
         super.onPause();
@@ -137,22 +152,16 @@ public class TripActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-
         accelManager.startListening();
-
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-
             locationTracker.startTracking();
         }
     }
 
     public int calculateScore(int eventCount, int durationSeconds) {
         int score = 100;
-        score -= eventCount * 8; // lose 8 points per harsh event
-        // Bonus: perfect trip over 5 minutes
+        score -= eventCount * 8;
         if (eventCount == 0 && durationSeconds >= 300) score = 100;
         return Math.max(0, score);
     }

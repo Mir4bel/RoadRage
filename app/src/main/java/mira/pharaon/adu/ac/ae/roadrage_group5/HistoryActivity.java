@@ -1,12 +1,15 @@
 package mira.pharaon.adu.ac.ae.roadrage_group5;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.List;
 
 public class HistoryActivity extends BaseActivity {
@@ -21,7 +24,7 @@ public class HistoryActivity extends BaseActivity {
         View emptyLayout          = findViewById(R.id.layout_empty);
 
         DatabaseManager tripDAO = new DatabaseManager(this);
-        List<String[]> trips = tripDAO.getAllTrips();
+        List<String[]> trips    = tripDAO.getAllTrips();
 
         if (trips.isEmpty()) {
             recyclerView.setVisibility(View.GONE);
@@ -30,17 +33,33 @@ public class HistoryActivity extends BaseActivity {
             recyclerView.setVisibility(View.VISIBLE);
             emptyLayout.setVisibility(View.GONE);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recyclerView.setAdapter(new TripAdapter(trips));
+            recyclerView.setAdapter(new TripAdapter(trips, trip -> {
+                // trip[4] is the trip ID — open MapActivity for this specific trip
+                Intent intent = new Intent(this, MapActivity.class);
+                intent.putExtra("trip_id",    Long.parseLong(trip[4]));
+                intent.putExtra("trip_date",  trip[0]);
+                intent.putExtra("trip_score", trip[1]);
+                startActivity(intent);
+            }));
         }
     }
 
-    // Adapter defined inside HistoryActivity for simplicity
+    // ─── Click listener interface ─────────────────────────────────────────────
+
+    interface OnTripClickListener {
+        void onTripClick(String[] trip);
+    }
+
+    // ─── Adapter ──────────────────────────────────────────────────────────────
+
     static class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
 
-        private List<String[]> trips;
+        private final List<String[]>      trips;
+        private final OnTripClickListener clickListener;
 
-        TripAdapter(List<String[]> trips) {
-            this.trips = trips;
+        TripAdapter(List<String[]> trips, OnTripClickListener listener) {
+            this.trips         = trips;
+            this.clickListener = listener;
         }
 
         static class ViewHolder extends RecyclerView.ViewHolder {
@@ -64,11 +83,13 @@ public class HistoryActivity extends BaseActivity {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             String[] trip = trips.get(position);
-            // trip[0]=date, trip[1]=score, trip[2]=persona, trip[3]=mood
+            // trip[0] = date (now includes time for new trips e.g. "Jun 04, 2026 · 14:30")
             holder.tvDate.setText(trip[0]);
             holder.tvScore.setText(trip[1]);
             holder.tvPersona.setText(trip[2]);
             holder.tvMood.setText(trip[3]);
+            // Whole card is tappable — opens the route map
+            holder.itemView.setOnClickListener(v -> clickListener.onTripClick(trip));
         }
 
         @Override
