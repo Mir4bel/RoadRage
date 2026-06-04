@@ -10,6 +10,7 @@ public class AccelerometerManager implements SensorEventListener {
 
     private static final float BRAKE_THRESHOLD = 15.0f;
     private static final float TURN_THRESHOLD  = 12.0f;
+    private static final float CRASH_THRESHOLD_M_S2 = 30.0f; // ~3g combined
 
     // Cooldown prevents logging 50 events from one bump
     // One event max every 2 seconds
@@ -19,6 +20,13 @@ public class AccelerometerManager implements SensorEventListener {
     private SensorManager sensorManager;
     private Sensor accelerometer;
     private AccelerometerEventListener eventListener;
+
+    public interface CrashListener { void onCrashDetected(float magnitude); }
+    private CrashListener crashListener;
+    private boolean crashCooldown = false;
+    private final android.os.Handler crashHandler = new android.os.Handler();
+
+    public void setCrashListener(CrashListener l) { this.crashListener = l; }
 
     // Same pattern as LocationTracker — interface to talk back to TripActivity
     public interface AccelerometerEventListener {
@@ -50,7 +58,7 @@ public class AccelerometerManager implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         float x = event.values[0]; // left/right tilt — detects sharp turns
         float y = event.values[1]; // forward/back tilt — detects braking
-        // z = event.values[2] is up/down — not needed for driving
+        float z = event.values[2]; //is up/down — not needed for driving
 
         long now = System.currentTimeMillis();
         if (now - lastEventTime < COOLDOWN_MS) return; // still in cooldown
@@ -61,6 +69,13 @@ public class AccelerometerManager implements SensorEventListener {
         } else if (Math.abs(x) > TURN_THRESHOLD) {
             lastEventTime = now;
             eventListener.onHarshEvent("turn", Math.abs(x));
+        }
+
+        float mag = (float) Math.sqrt(x*x + y*y + z*z);
+        if (mag > CRASH_THRESHOLD_M_S2 && !crashCooldown && crashListener != null) {
+            crashCooldown = true;
+            crashListener.onCrashDetected(mag);
+            crashHandler.postDelayed(() -> crashCooldown = false, 5000);
         }
     }
 

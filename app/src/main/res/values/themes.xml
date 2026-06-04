@@ -1,5 +1,6 @@
 <resources>
     <style name="Theme.RoadRageGroup5" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="fontFamily">@font/quicksand_semibold</item>
         <!-- Primary Colors -->
         <item name="colorPrimary">@color/md_theme_primary</item>
         <item name="colorOnPrimary">@color/md_theme_on_primary</item>
@@ -35,5 +36,35 @@
         <!-- Material3 Custom Attributes -->
         <item name="colorOutline">#79747E</item>
         <item name="colorOutlineVariant">#CAC7D0</item>
+    </style>
+    <style name="DebugSectionHeader">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:letterSpacing">0.12</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginBottom">6dp</item>
+        <item name="android:paddingStart">4dp</item>
+    </style>
+
+    <style name="DebugCard">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="cardCornerRadius">12dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">?attr/colorOutlineVariant</item>
+        <item name="android:layout_marginBottom">4dp</item>
+    </style>
+
+    <style name="DebugMono">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">14dp</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:lineSpacingMultiplier">1.6</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 </resources>

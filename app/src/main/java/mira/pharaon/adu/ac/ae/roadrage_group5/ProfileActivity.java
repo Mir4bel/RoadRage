@@ -1,11 +1,18 @@
 package mira.pharaon.adu.ac.ae.roadrage_group5;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.widget.Button;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProfileActivity extends BaseActivity {
@@ -16,71 +23,73 @@ public class ProfileActivity extends BaseActivity {
         setContentView(R.layout.activity_profile);
         setupBottomNav(R.id.nav_profile);
 
-        TextView tvTotalTrips = findViewById(R.id.tv_total_trips);
-        TextView tvAvg = findViewById(R.id.tv_profile_avg);
+        DatabaseManager db = new DatabaseManager(this);
+
+        // ─── Stats ───────────────────────────────────────────────────────────
+        TextView tvTrips   = findViewById(R.id.tv_total_trips);
+        TextView tvAvg     = findViewById(R.id.tv_profile_avg);
         TextView tvPersona = findViewById(R.id.tv_profile_persona);
-        LinearLayout moodContainer = findViewById(R.id.ll_mood_impact);
 
-        DatabaseManager tripDAO = new DatabaseManager(this);
+        List<String[]> trips = db.getAllTrips();
+        tvTrips.setText(String.valueOf(trips.size()));
 
-        // Basic stats
-        String[] stats = tripDAO.getUserStats();
-        tvAvg.setText(stats[0]);     // average score
-        tvPersona.setText(stats[1]); // persona
+        String[] stats = db.getUserStats();
+        tvAvg.setText(stats[0]);
 
-        // Total trip count
-        List<String[]> allTrips = tripDAO.getAllTrips();
-        tvTotalTrips.setText(String.valueOf(allTrips.size()));
-
-        // Mood impact rows
-        List<String[]> moodStats = tripDAO.getAverageScoreByMood();
-
-        if (moodStats.isEmpty()) {
-            TextView tv = new TextView(this);
-            tv.setText("Complete some trips to see mood impact");
-            tv.setTextSize(13);
-            tv.setTextColor(getColor(android.R.color.darker_gray));
-            moodContainer.addView(tv);
+        PersonaManager pm = new PersonaManager();
+        if (!stats[1].equals("Unknown")) {
+            tvPersona.setText(pm.getPersonaEmoji(stats[1]) + "  " + stats[1]);
+            tvPersona.setTextColor(Color.parseColor(pm.getPersonaColor(stats[1])));
         } else {
-            for (String[] row : moodStats) {
-                // Each row gets a card
-                MaterialCardView card = new MaterialCardView(this);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                );
-                params.setMargins(0, 0, 0, 12);
-                card.setLayoutParams(params);
-                card.setRadius(16);
-                card.setCardElevation(0);
-                card.setStrokeWidth(2);
+            tvPersona.setText("—  No trips yet");
+        }
 
-                LinearLayout inner = new LinearLayout(this);
-                inner.setOrientation(LinearLayout.HORIZONTAL);
-                inner.setPadding(40, 32, 40, 32);
+        // ─── Score trend chart ────────────────────────────────────────────────
+        ScoreBarChartView chart = findViewById(R.id.score_chart);
+        List<Integer> scores = new ArrayList<>();
+        // getAllTrips returns DESC order — chart wants oldest first (ASC)
+        for (int i = trips.size() - 1; i >= 0 && i >= trips.size() - 10; i--) {
+            scores.add(Integer.parseInt(trips.get(i)[1]));
+        }
+        chart.setScores(scores);
 
-                TextView tvMood = new TextView(this);
-                tvMood.setText(row[0]); // mood name
-                tvMood.setTextSize(15);
-                tvMood.setLayoutParams(new LinearLayout.LayoutParams(
-                        0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-
-                TextView tvScore = new TextView(this);
-                tvScore.setText("avg " + row[1]); // avg score
-                tvScore.setTextSize(15);
-                tvScore.setTextColor(getColor(android.R.color.holo_blue_dark));
-
-                inner.addView(tvMood);
-                inner.addView(tvScore);
-                card.addView(inner);
-                moodContainer.addView(card);
-            }
-
-            Button btnDebug = findViewById(R.id.btn_debug);
-            if (btnDebug != null) {
-                btnDebug.setOnClickListener(v ->
-                        startActivity(new Intent(this, DebugActivity.class)));
+        // ─── Mood impact ──────────────────────────────────────────────────────
+        LinearLayout llMood = findViewById(R.id.ll_mood_impact);
+        List<String[]> moodData = db.getAverageScoreByMood();
+        if (moodData.isEmpty()) {
+            TextView empty = new TextView(this);
+            empty.setText("No data yet — complete a trip to see mood impact.");
+            empty.setTextColor(getColor(android.R.color.darker_gray));
+            llMood.addView(empty);
+        } else {
+            for (String[] row : moodData) {
+                View item = LayoutInflater.from(this)
+                        .inflate(R.layout.item_mood_impact, llMood, false);
+                ((TextView) item.findViewById(R.id.tv_mood_name)).setText(row[0]);
+                ((TextView) item.findViewById(R.id.tv_mood_avg)).setText(row[1]);
+                llMood.addView(item);
             }
         }
+
+        // ─── Emergency contact ────────────────────────────────────────────────
+        SharedPreferences prefs = getSharedPreferences("roadrage_prefs", MODE_PRIVATE);
+        EditText etContact  = findViewById(R.id.et_emergency_contact);
+        MaterialButton btnSaveContact = findViewById(R.id.btn_save_contact);
+
+        String existing = prefs.getString("emergency_contact", "");
+        if (!existing.isEmpty()) etContact.setText(existing);
+
+        btnSaveContact.setOnClickListener(v -> {
+            String number = etContact.getText().toString().trim();
+            prefs.edit().putString("emergency_contact", number).apply();
+            Toast.makeText(this,
+                    number.isEmpty() ? "Emergency contact cleared." : "Saved: " + number,
+                    Toast.LENGTH_SHORT).show();
+        });
+
+        // ─── Debug button ─────────────────────────────────────────────────────
+        MaterialButton btnDebug = findViewById(R.id.btn_debug);
+        btnDebug.setOnClickListener(v ->
+                startActivity(new Intent(this, DebugActivity.class)));
     }
 }

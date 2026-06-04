@@ -56,4 +56,18 @@
     <string name="message_rocket">Fast and unpredictable. Slow it down.</string>
     <string name="message_ghost">Multiple harsh events detected. Drive safer.</string>
 
+    <!-- Personas -->
+    <string name="persona_surgeon">The Surgeon</string>
+    <string name="persona_navigator">The Navigator</string>
+    <string name="persona_maverick">The Maverick</string>
+    <string name="persona_chaos">Chaos Theory</string>
+
+    <!-- Crash alert -->
+    <string name="crash_detected">CRASH DETECTED</string>
+    <string name="im_ok">I\'M OK — CANCEL</string>
+
+    <!-- Profile -->
+    <string name="emergency_contact_hint">Emergency contact number</string>
+    <string name="score_trend">Score Trend</string>
+
 </resources>

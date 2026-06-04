@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="#F66E6E"
+    android:padding="32dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="⚠"
+        android:textStyle="bold"
+        android:textSize="84sp"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CRASH DETECTED"
+        android:textSize="28sp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="#FFFFFF"
+        android:letterSpacing="0.05"
+        android:layout_marginBottom="12dp"/>
+
+    <TextView
+        android:id="@+id/tv_crash_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sending emergency alert in..."
+        android:textSize="14sp"
+        android:textColor="#CCFFFFFF"
+        android:gravity="center"
+        android:layout_marginBottom="48dp"/>
+
+    <!-- Countdown number -->
+    <TextView
+        android:id="@+id/tv_countdown"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:background="@drawable/bg_countdown_circle"
+        android:text="10"
+        android:textSize="52sp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:layout_marginBottom="48dp"/>
+
+    <!-- I'M OK button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_im_ok"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:text="I'M OK, CANCEL"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:fontFamily="sans-serif-medium"
+        app:backgroundTint="#FFFFFF"
+        android:textColor="@color/md_theme_on_error_container"
+        app:cornerRadius="16dp"
+        xmlns:app="http://schemas.android.com/apk/res-auto"/>
+
+</LinearLayout>

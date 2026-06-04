@@ -3,15 +3,16 @@ package mira.pharaon.adu.ac.ae.roadrage_group5;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
-import android.widget.Button;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,13 +26,17 @@ public class TripActivity extends AppCompatActivity
     private AccelerometerManager accelManager;
     private LocationTracker locationTracker;
 
-    private TextView tvEventCount, tvSpeed;
-    private int eventCount = 0;
-    private long tripStartTime;
-    private String selectedMood;
+    private TextView        tvSpeed, tvEventCount, tvSpeedStatus, tvTimer;
+    private SpeedGraphView  speedGraph;
+    private MaterialCardView cardSpeedHero;
 
-    // GPS points collected during the trip — flushed to DB in stopTrip()
-    private final List<double[]> locationPoints = new ArrayList<>(); // [lat, lng, speed_kmh]
+    private int     eventCount    = 0;
+    private long    tripStartTime;
+    private String  selectedMood;
+
+    private final List<double[]> locationPoints = new ArrayList<>();
+    private final Handler timerHandler          = new Handler();
+    private Runnable timerRunnable;
 
     private static final int LOCATION_PERMISSION_REQUEST = 100;
 
@@ -42,12 +47,25 @@ public class TripActivity extends AppCompatActivity
 
         selectedMood = getIntent().getStringExtra("mood");
 
-        tvEventCount = findViewById(R.id.tv_event_count);
-        tvSpeed      = findViewById(R.id.tv_speed);
-        Button btnStop = findViewById(R.id.btn_stop_trip);
+        tvSpeed       = findViewById(R.id.tv_speed);
+        tvEventCount  = findViewById(R.id.tv_event_count);
+        tvSpeedStatus = findViewById(R.id.tv_speed_status);
+        tvTimer       = findViewById(R.id.tv_trip_timer);
+        speedGraph    = findViewById(R.id.speed_graph);
+        cardSpeedHero = findViewById(R.id.card_speed_hero);
+        MaterialButton btnStop = findViewById(R.id.btn_stop_trip);
 
         accelManager    = new AccelerometerManager(this, this);
         locationTracker = new LocationTracker(this, this);
+
+        // Wire crash detection if AccelerometerManager supports it
+        accelManager.setCrashListener(magnitude ->
+                runOnUiThread(() -> {
+                    Intent crashIntent = new Intent(TripActivity.this, CrashAlertActivity.class);
+                    crashIntent.putExtra("magnitude", magnitude);
+                    startActivity(crashIntent);
+                })
+        );
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -61,7 +79,21 @@ public class TripActivity extends AppCompatActivity
         accelManager.startListening();
         tripStartTime = SystemClock.elapsedRealtime();
 
+        startTimer();
         btnStop.setOnClickListener(v -> stopTrip());
+    }
+
+    private void startTimer() {
+        timerRunnable = new Runnable() {
+            @Override
+            public void run() {
+                long elapsed = (SystemClock.elapsedRealtime() - tripStartTime) / 1000;
+                long min = elapsed / 60, sec = elapsed % 60;
+                tvTimer.setText(String.format(Locale.getDefault(), "%d:%02d", min, sec));
+                timerHandler.postDelayed(this, 1000);
+            }
+        };
+        timerHandler.post(timerRunnable);
     }
 
     @Override
@@ -74,7 +106,7 @@ public class TripActivity extends AppCompatActivity
         }
     }
 
-    // ─── AccelerometerManager callbacks ──────────────────────────────────────
+    // ─── Sensor callbacks ────────────────────────────────────────────────────
 
     @Override
     public void onHarshEvent(String type, float severity) {
@@ -82,19 +114,17 @@ public class TripActivity extends AppCompatActivity
         runOnUiThread(() -> tvEventCount.setText(String.valueOf(eventCount)));
     }
 
-    // ─── LocationTracker callbacks ────────────────────────────────────────────
-
     @Override
-    public void onSpeedUpdate(float speedKmh) {
-        // Speed UI is now handled in onLocationUpdate; this satisfies the interface.
-    }
+    public void onSpeedUpdate(float speedKmh) { /* handled in onLocationUpdate */ }
 
     @Override
     public void onLocationUpdate(double lat, double lng, float speedKmh) {
-        // Collect every GPS fix for the map
         locationPoints.add(new double[]{lat, lng, speedKmh});
-        runOnUiThread(() ->
-                tvSpeed.setText(String.format(Locale.getDefault(), "%.0f km/h", speedKmh)));
+        runOnUiThread(() -> {
+            tvSpeed.setText(String.format(Locale.getDefault(), "%.0f", speedKmh));
+            speedGraph.addSpeedReading(speedKmh);
+            updateHeroCard(speedKmh);
+        });
     }
 
     @Override
@@ -103,33 +133,44 @@ public class TripActivity extends AppCompatActivity
         runOnUiThread(() -> tvEventCount.setText(String.valueOf(eventCount)));
     }
 
-    // ─── Trip lifecycle ───────────────────────────────────────────────────────
+    // ─── Hero card color/status update ───────────────────────────────────────
+
+    private void updateHeroCard(float speedKmh) {
+        int color;
+        String status;
+        if (speedKmh > 120) {
+            color = Color.parseColor("#C62828"); status = "OVERSPEEDING";
+        } else if (speedKmh > 80) {
+            color = Color.parseColor("#E65100"); status = "HIGH SPEED";
+        } else if (speedKmh > 30) {
+            color = Color.parseColor("#2E7D32"); status = "SPEED OK";
+        } else {
+            color = Color.parseColor("#1565C0"); status = "SLOW / STOPPED";
+        }
+        cardSpeedHero.setCardBackgroundColor(color);
+        tvSpeedStatus.setText(status);
+    }
+
+    // ─── End trip ────────────────────────────────────────────────────────────
 
     private void stopTrip() {
         accelManager.stopListening();
         locationTracker.stopTracking();
+        timerHandler.removeCallbacks(timerRunnable);
 
-        int durationSeconds = (int) ((SystemClock.elapsedRealtime() - tripStartTime) / 1000);
+        int durationSeconds = (int)((SystemClock.elapsedRealtime() - tripStartTime) / 1000);
         int score    = calculateScore(eventCount, durationSeconds);
         String persona = new PersonaManager().getPersona(score);
+        String date  = new SimpleDateFormat("MMM dd, yyyy · HH:mm", Locale.getDefault()).format(new Date());
 
-        // Date now includes time so History shows when exactly each trip happened
-        String date = new SimpleDateFormat("MMM dd, yyyy · HH:mm", Locale.getDefault())
-                .format(new Date());
-
-        // Save trip and all its GPS points to the database
-        // NOTE: remove db.insertTrip() and db.updateUserStats() from ResultActivity
-        //       — they are now handled here to avoid double-saving.
         DatabaseManager db = new DatabaseManager(this);
         long tripId = db.insertTrip(date, durationSeconds, score, selectedMood, eventCount, persona);
 
-        for (double[] point : locationPoints) {
-            db.insertLocation(tripId, point[0], point[1], (float) point[2]);
-        }
+        for (double[] p : locationPoints)
+            db.insertLocation(tripId, p[0], p[1], (float) p[2]);
 
         db.updateUserStats(this);
 
-        // Pass tripId so ResultActivity can show a "View on Map" button if desired
         Intent intent = new Intent(this, ResultActivity.class);
         intent.putExtra("score",      score);
         intent.putExtra("persona",    persona);
@@ -147,12 +188,14 @@ public class TripActivity extends AppCompatActivity
         super.onPause();
         accelManager.stopListening();
         locationTracker.stopTracking();
+        timerHandler.removeCallbacks(timerRunnable);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         accelManager.startListening();
+        startTimer();
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             locationTracker.startTracking();
@@ -160,8 +203,7 @@ public class TripActivity extends AppCompatActivity
     }
 
     public int calculateScore(int eventCount, int durationSeconds) {
-        int score = 100;
-        score -= eventCount * 8;
+        int score = 100 - eventCount * 8;
         if (eventCount == 0 && durationSeconds >= 300) score = 100;
         return Math.max(0, score);
     }

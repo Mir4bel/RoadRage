@@ -1,81 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="?attr/colorSurface">
 
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar_mood"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorSurface"
+        app:navigationIcon="@drawable/ic_arrow_back_24"
+        app:title=""
+        app:elevation="0dp"/>
+
+    <!-- Main content: centered between toolbar and wheel -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:gravity="center"
+        android:paddingHorizontal="32dp">
 
+        <!-- "Let's capture your mood today." (colored in Java) -->
         <TextView
+            android:id="@+id/tv_mood_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Before you drive"
-            android:textSize="28sp"
+            android:text="Let's capture your mood today."
+            android:textSize="18sp"
             android:fontFamily="sans-serif-medium"
             android:textColor="?attr/colorOnBackground"
+            android:gravity="center"
+            android:layout_marginBottom="32dp"/>
+
+        <!-- Big emoji — changes with wheel selection -->
+        <TextView
+            android:id="@+id/tv_selected_emoji"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="😊"
+            android:textSize="80sp"
             android:layout_marginBottom="8dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="How are you feeling right now?"
-            android:textSize="16sp"
+            android:text="Mood Indicator"
+            android:textSize="11sp"
+            android:letterSpacing="0.08"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:layout_marginBottom="40dp"/>
+            android:layout_marginBottom="8dp"/>
 
-        <!-- Mood buttons as outlined cards -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_mood_happy"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:text="😊  Happy"
-            android:textSize="16sp"
-            app:cornerRadius="16dp"
-            android:layout_marginBottom="12dp"/>
+        <!-- "I'm Feeling Happy" — changes with selection -->
+        <TextView
+            android:id="@+id/tv_mood_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="I'm Feeling Happy"
+            android:textSize="22sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="?attr/colorOnBackground"
+            android:layout_marginBottom="28dp"/>
 
+        <!-- Confirm button sits between the label and the wheel -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_mood_neutral"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:text="😐  Neutral"
-            android:textSize="16sp"
-            app:cornerRadius="16dp"
-            android:layout_marginBottom="12dp"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_mood_tired"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:text="😴  Tired"
-            android:textSize="16sp"
-            app:cornerRadius="16dp"
-            android:layout_marginBottom="12dp"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_mood_stressed"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:text="😣  Stressed"
-            android:textSize="16sp"
-            app:cornerRadius="16dp"
-            android:layout_marginBottom="40dp"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_confirm_mood"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:text="Start Tracking"
-            android:textSize="18sp"
-            app:cornerRadius="16dp"/>
+            android:id="@+id/btn_save_mood"
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+            android:paddingHorizontal="40dp"
+            android:text="Save my feeling"
+            android:textSize="15sp"
+            app:cornerRadius="26dp"/>
 
     </LinearLayout>
-</ScrollView>
+
+    <!-- Emoji wheel anchored to bottom — only top arc is visible -->
+    <mira.pharaon.adu.ac.ae.roadrage_group5.MoodWheelView
+        android:id="@+id/mood_wheel"
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        android:paddingBottom="16dp"/>
+
+</LinearLayout>

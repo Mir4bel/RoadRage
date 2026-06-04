@@ -4,98 +4,158 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
-    android:padding="24dp"
     android:background="?attr/colorSurface">
 
+    <!-- Tiny status label at the top -->
     <TextView
-        android:id="@+id/tv_status"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Trip in Progress"
-        android:textSize="26sp"
-        android:fontFamily="sans-serif-medium"
-        android:textColor="?attr/colorOnBackground"
-        android:layout_marginBottom="48dp"/>
+        android:text="TRIP IN PROGRESS"
+        android:textSize="11sp"
+        android:letterSpacing="0.12"
+        android:gravity="center"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:paddingTop="16dp"
+        android:paddingBottom="10dp"/>
 
-    <!-- Speed card -->
+    <!-- Speed hero band — background color changes with speed -->
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_speed_hero"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="20dp"
         app:cardElevation="0dp"
-        android:backgroundTint="?attr/colorPrimaryContainer"
-        android:layout_marginBottom="16dp">
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="12dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:padding="20dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <!-- Top row: status label + (future: timer) -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="SPEED"
-                android:textSize="11sp"
-                android:letterSpacing="0.1"
-                android:textColor="?attr/colorOnPrimaryContainer"/>
+                android:orientation="horizontal">
 
+                <TextView
+                    android:id="@+id/tv_speed_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SPEED OK"
+                    android:textSize="11sp"
+                    android:letterSpacing="0.08"
+                    android:textColor="#CCFFFFFF"/>
+
+                <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1"/>
+
+                <TextView
+                    android:id="@+id/tv_trip_timer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0:00"
+                    android:textSize="11sp"
+                    android:textColor="#AAFFFFFF"/>
+
+            </LinearLayout>
+
+            <!-- Big speed number -->
             <TextView
                 android:id="@+id/tv_speed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0 km/h"
-                android:textSize="48sp"
-                android:fontFamily="sans-serif-medium"
-                android:textColor="?attr/colorOnPrimaryContainer"/>
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <!-- Events card -->
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="0dp"
-        android:backgroundTint="?attr/colorErrorContainer"
-        android:layout_marginBottom="48dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="HARSH EVENTS"
-                android:textSize="11sp"
-                android:letterSpacing="0.1"
-                android:textColor="?attr/colorOnErrorContainer"/>
-
-            <TextView
-                android:id="@+id/tv_event_count"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="0"
-                android:textSize="48sp"
+                android:textSize="72sp"
                 android:fontFamily="sans-serif-medium"
-                android:textColor="?attr/colorOnErrorContainer"/>
+                android:textColor="#FFFFFF"
+                android:gravity="center"
+                android:lineHeight="80sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="km/h"
+                android:textSize="13sp"
+                android:textColor="#CCFFFFFF"
+                android:gravity="center"/>
+
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_stop_trip"
-        style="@style/Widget.Material3.Button.OutlinedButton"
+    <!-- Speed graph — gets the rest of the screen -->
+    <mira.pharaon.adu.ac.ae.roadrage_group5.SpeedGraphView
+        android:id="@+id/speed_graph"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:text="Stop Trip"
-        android:textSize="18sp"
-        android:textColor="?attr/colorError"
-        app:cornerRadius="16dp"
-        app:strokeColor="?attr/colorError"
-        app:strokeWidth="1.5dp"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginHorizontal="8dp"/>
+
+    <!-- Bottom bar: event counter on left, stop button on right -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp">
+
+        <!-- Harsh events badge -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            android:backgroundTint="?attr/colorErrorContainer">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⚡ "
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/tv_event_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="20sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="?attr/colorOnErrorContainer"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" events"
+                    android:textSize="12sp"
+                    android:textColor="?attr/colorOnErrorContainer"/>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1"/>
+
+        <!-- STOP button: circular red -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_stop_trip"
+            android:layout_width="wrap_content"
+            android:layout_height="72dp"
+            android:text="END TRIP"
+            android:textSize="12sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="#FFFFFF"
+            android:stateListAnimator="@null"
+            app:backgroundTint="@color/md_theme_on_primary_container"
+            app:cornerRadius="36dp"
+            app:elevation="6dp"/>
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -1,34 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
     android:background="?attr/colorSurface">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Debug Information"
-        android:textSize="24sp"
-        android:fontFamily="sans-serif-medium"
-        android:textColor="?attr/colorOnBackground"
-        android:layout_marginBottom="16dp" />
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar_debug"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorSurface"
+        app:navigationIcon="@drawable/ic_arrow_back_24"
+        app:title="Debug"
+        app:titleTextColor="?attr/colorOnSurface"/>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/tv_debug_info"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:fontFamily="monospace"
-            android:textColor="?attr/colorOnSurface"
-            android:lineSpacingMultiplier="1.5" />
+            android:orientation="vertical"
+            android:padding="16dp">
 
+            <!-- Live: Accelerometer -->
+            <TextView style="@style/DebugSectionHeader" android:text="LIVE: ACCELEROMETER"/>
+            <com.google.android.material.card.MaterialCardView style="@style/DebugCard">
+                <TextView android:id="@+id/tv_accel_live" style="@style/DebugMono"
+                    android:text="Waiting for sensor data..."/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Live: Database -->
+            <TextView style="@style/DebugSectionHeader" android:text="LIVE: DATABASE"/>
+            <com.google.android.material.card.MaterialCardView style="@style/DebugCard">
+                <TextView android:id="@+id/tv_db_stats" style="@style/DebugMono"
+                    android:text="Loading..."/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Live: GPS -->
+            <TextView style="@style/DebugSectionHeader" android:text="LIVE: GPS"/>
+            <com.google.android.material.card.MaterialCardView style="@style/DebugCard">
+                <TextView android:id="@+id/tv_gps_live" style="@style/DebugMono"
+                    android:text="Checking..."/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Static: Device -->
+            <TextView style="@style/DebugSectionHeader" android:text="DEVICE"/>
+            <com.google.android.material.card.MaterialCardView style="@style/DebugCard">
+                <TextView android:id="@+id/tv_device_info" style="@style/DebugMono"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Static: Sensors -->
+            <TextView style="@style/DebugSectionHeader" android:text="SENSORS"/>
+            <com.google.android.material.card.MaterialCardView style="@style/DebugCard">
+                <TextView android:id="@+id/tv_sensor_info" style="@style/DebugMono"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Static: Permissions -->
+            <TextView style="@style/DebugSectionHeader" android:text="PERMISSIONS"/>
+            <com.google.android.material.card.MaterialCardView style="@style/DebugCard">
+                <TextView android:id="@+id/tv_permissions" style="@style/DebugMono"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Static: Thresholds -->
+            <TextView style="@style/DebugSectionHeader" android:text="DETECTION THRESHOLDS"/>
+            <com.google.android.material.card.MaterialCardView
+                style="@style/DebugCard">
+            <TextView android:id="@+id/tv_thresholds" style="@style/DebugMono"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Actions -->
+            <TextView style="@style/DebugSectionHeader" android:text="ACTIONS"/>
+            <com.google.android.material.card.MaterialCardView style="@style/DebugCard">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_test_crash"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:text="Simulate Crash Alert"
+                        android:textSize="13sp"
+                        app:backgroundTint="@color/md_theme_error"
+                        app:cornerRadius="12dp"
+                        android:layout_marginBottom="8dp"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_copy_stats"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:text="Copy All Stats to Clipboard"
+                        android:textSize="13sp"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        app:cornerRadius="12dp"
+                        android:layout_marginBottom="8dp"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_clear_db"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:text="Clear All Trip Data"
+                        android:textSize="13sp"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:textColor="?attr/colorError"
+                        app:cornerRadius="12dp"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
     </ScrollView>
-
 </LinearLayout>
-
