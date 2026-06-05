@@ -1,6 +1,21 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
 }
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { localProperties.load(it) }
+}
+
+fun String?.nonBlankOrNull(): String? = this?.takeIf { it.isNotBlank() }
+
+val mapsApiKey = (findProperty("MAPS_API_KEY") as String?).nonBlankOrNull()
+    ?: System.getenv("MAPS_API_KEY").nonBlankOrNull()
+    ?: localProperties.getProperty("MAPS_API_KEY").nonBlankOrNull()
+    ?: "YOUR_ANDROID_MAPS_API_KEY"
 
 android {
     namespace = "mira.pharaon.adu.ac.ae.roadrage_group5"
@@ -18,6 +33,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
     }
 
     buildTypes {

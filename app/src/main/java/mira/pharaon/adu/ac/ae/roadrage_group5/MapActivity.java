@@ -66,6 +66,9 @@ public class MapActivity extends AppCompatActivity {
     // ─── Route drawing ────────────────────────────────────────────────────────
 
     private void loadTripRoute(long tripId) {
+        findViewById(R.id.card_no_route).setVisibility(View.GONE);
+        findViewById(R.id.card_legend).setVisibility(View.GONE);
+
         DatabaseManager db = new DatabaseManager(this);
         List<double[]> points = db.getLocationsForTrip(tripId);
 
@@ -142,6 +145,7 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void showNoData() {
+        findViewById(R.id.card_legend).setVisibility(View.GONE);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_UAE, DEFAULT_ZOOM));
         findViewById(R.id.card_no_route).setVisibility(View.VISIBLE);
     }
