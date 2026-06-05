@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingVertical="6dp">
+
+    <!-- Rank medal or number -->
+    <TextView
+        android:id="@+id/tv_rank"
+        android:layout_width="36dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"/>
+
+    <!-- Persona emoji -->
+    <TextView
+        android:id="@+id/tv_lb_persona"
+        android:layout_width="32dp"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:layout_marginEnd="8dp"/>
+
+    <!-- Date (takes remaining space) -->
+    <TextView
+        android:id="@+id/tv_lb_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="12sp"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:maxLines="1"
+        android:ellipsize="end"/>
+
+    <!-- Score (right side) -->
+    <TextView
+        android:id="@+id/tv_lb_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:fontFamily="sans-serif-medium"/>
+
+</LinearLayout>

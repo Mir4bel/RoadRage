@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/nav_home"
-        android:icon="@android:drawable/ic_menu_compass"
+
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_home_24"
         android:title="Home"/>
-    <item android:id="@+id/nav_history"
-        android:icon="@android:drawable/ic_menu_recent_history"
+
+    <item
+        android:id="@+id/nav_history"
+        android:icon="@drawable/ic_history_24"
         android:title="History"/>
-    <item android:id="@+id/nav_profile"
-        android:icon="@android:drawable/ic_menu_myplaces"
+
+    <item
+        android:id="@+id/nav_progress"
+        android:icon="@drawable/ic_trophy_24"
+        android:title="Progress"/>
+
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/ic_person_24"
         android:title="Profile"/>
+
 </menu>

@@ -5,14 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseManager extends SQLiteOpenHelper {
 
-    private static final String DB_NAME = "roadrage.db";
-    private static final int DB_VERSION = 2; // bumped: added locations table
+    private static final String DB_NAME    = "roadrage.db";
+    private static final int    DB_VERSION = 3; // v3: added timestamp_ms to trips
 
     public DatabaseManager(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -27,7 +26,8 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 "score INTEGER, " +
                 "mood TEXT, " +
                 "harsh_event_count INTEGER, " +
-                "persona TEXT)");
+                "persona TEXT, " +
+                "timestamp_ms INTEGER DEFAULT 0)");
 
         db.execSQL("CREATE TABLE events (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -44,7 +44,6 @@ public class DatabaseManager extends SQLiteOpenHelper {
                 "average_score REAL DEFAULT 0, " +
                 "current_persona TEXT DEFAULT 'Unknown')");
 
-        // Stores GPS coordinates captured during each trip for the map view
         db.execSQL("CREATE TABLE locations (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "trip_id INTEGER, " +
@@ -58,148 +57,255 @@ public class DatabaseManager extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Non-destructive migration: only add what's new.
-        // The original drop-all approach wipes test data every time you change the schema.
         if (oldVersion < 2) {
             db.execSQL("CREATE TABLE IF NOT EXISTS locations (" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "trip_id INTEGER, " +
-                    "latitude REAL, " +
-                    "longitude REAL, " +
-                    "speed_kmh REAL, " +
+                    "trip_id INTEGER, latitude REAL, longitude REAL, speed_kmh REAL, " +
                     "FOREIGN KEY(trip_id) REFERENCES trips(id))");
         }
-        // For future schema changes: add else-if (oldVersion < 3) { ... } blocks here
+        if (oldVersion < 3) {
+            // Add timestamp column; existing rows get 0 (they'll be excluded from weekly queries)
+            db.execSQL("ALTER TABLE trips ADD COLUMN timestamp_ms INTEGER DEFAULT 0");
+        }
     }
-
 
     // ─── Trip methods ─────────────────────────────────────────────────────────
 
+    /** timestamp_ms is recorded automatically — callers don't need to pass it. */
     public long insertTrip(String date, int duration, int score, String mood,
                            int eventCount, String persona) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("date", date);
-        values.put("duration_seconds", duration);
-        values.put("score", score);
-        values.put("mood", mood);
-        values.put("harsh_event_count", eventCount);
-        values.put("persona", persona);
-        return db.insert("trips", null, values);
+        ContentValues v = new ContentValues();
+        v.put("date", date);
+        v.put("duration_seconds", duration);
+        v.put("score", score);
+        v.put("mood", mood);
+        v.put("harsh_event_count", eventCount);
+        v.put("persona", persona);
+        v.put("timestamp_ms", System.currentTimeMillis());
+        return db.insert("trips", null, v);
     }
 
-    // [0]=date, [1]=score, [2]=persona, [3]=mood, [4]=id  ← id added for map navigation
+    /** [0]=date [1]=score [2]=persona [3]=mood [4]=id — DESC order */
     public List<String[]> getAllTrips() {
         List<String[]> trips = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM trips ORDER BY id DESC", null);
-        while (cursor.moveToNext()) {
+        Cursor c = db.rawQuery("SELECT * FROM trips ORDER BY id DESC", null);
+        while (c.moveToNext()) {
             trips.add(new String[]{
-                    cursor.getString(cursor.getColumnIndexOrThrow("date")),
-                    String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow("score"))),
-                    cursor.getString(cursor.getColumnIndexOrThrow("persona")),
-                    cursor.getString(cursor.getColumnIndexOrThrow("mood")),
-                    String.valueOf(cursor.getLong(cursor.getColumnIndexOrThrow("id")))
+                    c.getString(c.getColumnIndexOrThrow("date")),
+                    String.valueOf(c.getInt(c.getColumnIndexOrThrow("score"))),
+                    c.getString(c.getColumnIndexOrThrow("persona")),
+                    c.getString(c.getColumnIndexOrThrow("mood")),
+                    String.valueOf(c.getLong(c.getColumnIndexOrThrow("id")))
             });
         }
-        cursor.close();
+        c.close();
+        return trips;
+    }
+
+    /** Top N trips by score — for the leaderboard. Same format as getAllTrips. */
+    public List<String[]> getTopTrips(int limit) {
+        List<String[]> trips = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(
+                "SELECT date, score, persona, mood, id FROM trips ORDER BY score DESC LIMIT ?",
+                new String[]{String.valueOf(limit)});
+        while (c.moveToNext()) {
+            trips.add(new String[]{
+                    c.getString(0),
+                    String.valueOf(c.getInt(1)),
+                    c.getString(2),
+                    c.getString(3),
+                    String.valueOf(c.getLong(4))
+            });
+        }
+        c.close();
         return trips;
     }
 
     public List<String[]> getAverageScoreByMood() {
         List<String[]> result = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(
+        Cursor c = db.rawQuery(
                 "SELECT mood, AVG(score) as avg_score FROM trips GROUP BY mood", null);
-        while (cursor.moveToNext()) {
-            result.add(new String[]{
-                    cursor.getString(0),
-                    String.format("%.0f", cursor.getDouble(1))
-            });
+        while (c.moveToNext()) {
+            result.add(new String[]{c.getString(0),
+                    String.format("%.0f", c.getDouble(1))});
         }
-        cursor.close();
+        c.close();
         return result;
     }
 
     public String[] getUserStats() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT AVG(score) FROM trips LIMIT 1", null);
-        if (cursor.moveToFirst()) {
-            double avg = cursor.getDouble(0);
-            cursor.close();
-            Cursor personaCursor = db.rawQuery(
+        Cursor c = db.rawQuery("SELECT AVG(score) FROM trips", null);
+        if (c.moveToFirst()) {
+            double avg = c.getDouble(0);
+            c.close();
+            Cursor c2 = db.rawQuery(
                     "SELECT persona FROM trips ORDER BY id DESC LIMIT 1", null);
             String persona = "Unknown";
-            if (personaCursor.moveToFirst()) persona = personaCursor.getString(0);
-            personaCursor.close();
-            return new String[]{String.format("%.0f", avg), persona != null ? persona : "Unknown"};
+            if (c2.moveToFirst()) persona = c2.getString(0);
+            c2.close();
+            return new String[]{String.format("%.0f", avg),
+                    persona != null ? persona : "Unknown"};
         }
-        cursor.close();
+        c.close();
         return new String[]{"0", "Unknown"};
     }
 
     public void updateUserStats(Context context) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT AVG(score) FROM trips", null);
+        Cursor c = db.rawQuery("SELECT AVG(score) FROM trips", null);
         double avg = 0;
-        if (cursor.moveToFirst()) avg = cursor.getDouble(0);
-        cursor.close();
-
-        Cursor cursor2 = db.rawQuery(
+        if (c.moveToFirst()) avg = c.getDouble(0);
+        c.close();
+        Cursor c2 = db.rawQuery(
                 "SELECT persona FROM trips ORDER BY id DESC LIMIT 1", null);
         String persona = "Unknown";
-        if (cursor2.moveToFirst()) persona = cursor2.getString(0);
-        cursor2.close();
-
-        ContentValues values = new ContentValues();
-        values.put("average_score", avg);
-        values.put("current_persona", persona);
-        db.update("user", values, "id = 1", null);
+        if (c2.moveToFirst()) persona = c2.getString(0);
+        c2.close();
+        ContentValues v = new ContentValues();
+        v.put("average_score", avg);
+        v.put("current_persona", persona);
+        db.update("user", v, "id = 1", null);
     }
 
+    // ─── Achievement queries ──────────────────────────────────────────────────
+
+    /**
+     * Returns true if the last N completed trips all scored >= threshold.
+     * Used for CHEETAH_X3 (last 3 trips all >= 80).
+     */
+    public boolean lastNTripsAllAboveScore(int n, int threshold) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        // Count how many of the last N trips meet the threshold
+        Cursor c = db.rawQuery(
+                "SELECT COUNT(*) FROM (SELECT score FROM trips ORDER BY id DESC LIMIT ?) " +
+                        "WHERE score >= ?",
+                new String[]{String.valueOf(n), String.valueOf(threshold)});
+        if (c.moveToFirst()) {
+            int count = c.getInt(0);
+            c.close();
+            // Must have at least N trips AND all of them qualify
+            return getAllTrips().size() >= n && count >= n;
+        }
+        c.close();
+        return false;
+    }
+
+    /**
+     * Returns true if the last N trips all had zero harsh events.
+     * Used for CLEAN_X3.
+     */
+    public boolean lastNTripsAllClean(int n) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(
+                "SELECT COUNT(*) FROM (SELECT harsh_event_count FROM trips ORDER BY id DESC LIMIT ?) " +
+                        "WHERE harsh_event_count = 0",
+                new String[]{String.valueOf(n)});
+        if (c.moveToFirst()) {
+            int count = c.getInt(0);
+            c.close();
+            return getAllTrips().size() >= n && count >= n;
+        }
+        c.close();
+        return false;
+    }
+
+    /**
+     * Returns true if the average of the last 5 trips exceeds the average of the
+     * first 5 trips by at least 'points'. Requires at least 10 trips total.
+     */
+    public boolean hasImprovedByPoints(int points) {
+        if (getAllTrips().size() < 10) return false;
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor c1 = db.rawQuery(
+                "SELECT AVG(score) FROM (SELECT score FROM trips ORDER BY id ASC LIMIT 5)", null);
+        double firstAvg = 0;
+        if (c1.moveToFirst()) firstAvg = c1.getDouble(0);
+        c1.close();
+
+        Cursor c2 = db.rawQuery(
+                "SELECT AVG(score) FROM (SELECT score FROM trips ORDER BY id DESC LIMIT 5)", null);
+        double lastAvg = 0;
+        if (c2.moveToFirst()) lastAvg = c2.getDouble(0);
+        c2.close();
+
+        return (lastAvg - firstAvg) >= points;
+    }
+
+    // ─── Weekly stats ─────────────────────────────────────────────────────────
+
+    public static class WeeklyStats {
+        public final int avgScore;
+        public final int tripCount;
+        WeeklyStats(int avg, int count) { avgScore = avg; tripCount = count; }
+    }
+
+    /**
+     * thisWeek=true  → stats for the last 7 days
+     * thisWeek=false → stats for the 7 days before that
+     */
+    public WeeklyStats getWeeklyStats(boolean thisWeek) {
+        long now      = System.currentTimeMillis();
+        long weekMs   = 7L * 24 * 60 * 60 * 1000;
+        long rangeEnd   = thisWeek ? now       : now - weekMs;
+        long rangeStart = thisWeek ? now - weekMs : now - 2 * weekMs;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(
+                "SELECT AVG(score), COUNT(*) FROM trips " +
+                        "WHERE timestamp_ms > ? AND timestamp_ms <= ?",
+                new String[]{String.valueOf(rangeStart), String.valueOf(rangeEnd)});
+
+        if (c.moveToFirst()) {
+            int avg   = (int) Math.round(c.getDouble(0));
+            int count = c.getInt(1);
+            c.close();
+            return new WeeklyStats(avg, count);
+        }
+        c.close();
+        return new WeeklyStats(0, 0);
+    }
+
+    // ─── Location methods ─────────────────────────────────────────────────────
+
+    public void insertLocation(long tripId, double lat, double lng, float speedKmh) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("trip_id", tripId);
+        v.put("latitude", lat);
+        v.put("longitude", lng);
+        v.put("speed_kmh", speedKmh);
+        db.insert("locations", null, v);
+    }
+
+    public List<double[]> getLocationsForTrip(long tripId) {
+        List<double[]> points = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(
+                "SELECT latitude, longitude, speed_kmh FROM locations " +
+                        "WHERE trip_id = ? ORDER BY id ASC",
+                new String[]{String.valueOf(tripId)});
+        while (c.moveToNext()) {
+            points.add(new double[]{c.getDouble(0), c.getDouble(1), c.getDouble(2)});
+        }
+        c.close();
+        return points;
+    }
 
     // ─── Event methods ────────────────────────────────────────────────────────
 
     public void insertEvent(long tripId, String eventType, int severity, String timestamp) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("trip_id", tripId);
-        values.put("event_type", eventType);
-        values.put("severity", severity);
-        values.put("timestamp", timestamp);
-        db.insert("events", null, values);
-    }
-
-
-    // ─── Location methods ─────────────────────────────────────────────────────
-
-    // Call once per GPS update during a trip
-    public void insertLocation(long tripId, double lat, double lng, float speedKmh) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("trip_id", tripId);
-        values.put("latitude", lat);
-        values.put("longitude", lng);
-        values.put("speed_kmh", speedKmh);
-        db.insert("locations", null, values);
-    }
-
-    // Returns ordered list of [lat, lng, speed_kmh] for drawing the route polyline
-    public List<double[]> getLocationsForTrip(long tripId) {
-        List<double[]> points = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(
-                "SELECT latitude, longitude, speed_kmh FROM locations " +
-                        "WHERE trip_id = ? ORDER BY id ASC",
-                new String[]{String.valueOf(tripId)});
-        while (cursor.moveToNext()) {
-            points.add(new double[]{
-                    cursor.getDouble(0), // lat
-                    cursor.getDouble(1), // lng
-                    cursor.getDouble(2)  // speed
-            });
-        }
-        cursor.close();
-        return points;
+        ContentValues v = new ContentValues();
+        v.put("trip_id", tripId);
+        v.put("event_type", eventType);
+        v.put("severity", severity);
+        v.put("timestamp", timestamp);
+        db.insert("events", null, v);
     }
 }

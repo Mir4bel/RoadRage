@@ -32,7 +32,7 @@ public class MoodActivity extends AppCompatActivity {
         // "How are you feeling right now?" — highlight the word "feeling"
         String full = "How are you feeling right now?";
         SpannableString ss = new SpannableString(full);
-        int s = full.indexOf("feeling"), e = s + 4;
+        int s = full.indexOf("feeling"), e = s + 7;
         int accentColor = getColor(R.color.md_theme_tertiary);
         ss.setSpan(new ForegroundColorSpan(accentColor), s, e, 0);
         ss.setSpan(new StyleSpan(Typeface.BOLD), s, e, 0);

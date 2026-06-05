@@ -72,17 +72,17 @@ public class HomeActivity extends BaseActivity {
         TextView tvPersona  = findViewById(R.id.tv_persona);
         TextView tvAvgScore = findViewById(R.id.tv_avg_score);
         TextView tvNextTier = findViewById(R.id.tv_next_tier);
+        TextView tvStreak   = findViewById(R.id.tv_home_streak);
 
-        DatabaseManager db  = new DatabaseManager(this);
-        String[] stats      = db.getUserStats(); // [0]=avgScore, [1]=persona
-        PersonaManager pm   = new PersonaManager();
+        DatabaseManager db = new DatabaseManager(this);
+        String[] stats     = db.getUserStats();
+        PersonaManager pm  = new PersonaManager();
 
         tvAvgScore.setText(stats[0]);
 
         if (!stats[1].equals("Unknown") && !stats[1].isEmpty()) {
             tvPersona.setText(pm.getPersonaEmoji(stats[1]) + "  " + stats[1]);
             tvPersona.setTextColor(Color.parseColor(pm.getPersonaColor(stats[1])));
-
             try {
                 int avg = Integer.parseInt(stats[0]);
                 tvNextTier.setText(progressMessage(avg));
@@ -93,6 +93,14 @@ public class HomeActivity extends BaseActivity {
         } else {
             tvPersona.setText("—");
             tvNextTier.setVisibility(View.GONE);
+        }
+
+        int streak = StreakManager.getCurrent(this);
+        if (streak > 0) {
+            tvStreak.setText("🔥 " + streak + " trip streak");
+            tvStreak.setVisibility(View.VISIBLE);
+        } else {
+            tvStreak.setVisibility(View.GONE);
         }
     }
 

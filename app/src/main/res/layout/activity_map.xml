@@ -13,6 +13,8 @@
         app:navigationIcon="@drawable/ic_arrow_back_24"
         app:title="Trip Route"
         app:titleTextColor="?attr/colorOnSurface"
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="14dp"
         app:subtitleTextColor="?attr/colorOnSurfaceVariant" />
 
     <!-- FrameLayout lets the legend and no-data cards overlay the map -->
@@ -105,7 +107,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="This trip was recorded before\nmap support was added."
+                    android:text="This trip does not have any recorded trip data."
                     android:textSize="13sp"
                     android:textColor="?attr/colorOnSurfaceVariant"
                     android:gravity="center" />

@@ -4,13 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?attr/colorSurface">
+    android:background="@color/white">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar_mood"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorSurface"
+        android:background="@color/white"
         app:navigationIcon="@drawable/ic_arrow_back_24"
         app:title=""
         app:elevation="0dp"/>
@@ -40,6 +40,8 @@
             android:layout_height="wrap_content"
             android:text="How are you feeling right now?"
             android:textSize="16sp"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:textColor="?attr/colorOnSurfaceVariant"
             android:layout_marginBottom="40dp"/>
         <!-- Big emoji — changes with wheel selection -->
@@ -79,7 +81,7 @@
         android:id="@+id/mood_wheel"
         android:layout_width="match_parent"
         android:layout_height="260dp"
-        android:paddingBottom="16dp"
+        android:paddingBottom="26dp"
         android:background="@drawable/gradient_background"/>
 
 </LinearLayout>

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RoadRage - Safe Driving Companion</string>
+    <string name="app_name">RoadRage</string>
 
     <!-- Home Screen -->
     <string name="home_title">RoadRage</string>
