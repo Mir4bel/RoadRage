@@ -2,6 +2,7 @@ package mira.pharaon.adu.ac.ae.roadrage_group5;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +20,8 @@ import com.google.android.material.appbar.MaterialToolbar;
 import java.util.List;
 
 public class MapActivity extends AppCompatActivity {
+
+    private static final String TAG = "MapActivity";
 
     private GoogleMap mMap;
 
@@ -47,20 +50,25 @@ public class MapActivity extends AppCompatActivity {
         SupportMapFragment mapFragment = (SupportMapFragment)
                 getSupportFragmentManager().findFragmentById(R.id.map);
 
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(googleMap -> {
-                mMap = googleMap;
-                mMap.getUiSettings().setZoomControlsEnabled(true);
-                mMap.getUiSettings().setMyLocationButtonEnabled(false);
-                mMap.getUiSettings().setMapToolbarEnabled(false);
-
-                if (tripId != -1) {
-                    loadTripRoute(tripId);
-                } else {
-                    showNoData();
-                }
-            });
+        if (mapFragment == null) {
+            Log.e(TAG, "Map fragment not found in activity_map.xml");
+            return;
         }
+
+        mapFragment.getMapAsync(googleMap -> {
+            Log.d(TAG, "GoogleMap is ready for tripId=" + tripId);
+            mMap = googleMap;
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            mMap.getUiSettings().setZoomControlsEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            mMap.getUiSettings().setMapToolbarEnabled(false);
+
+            if (tripId != -1) {
+                loadTripRoute(tripId);
+            } else {
+                showNoData();
+            }
+        });
     }
 
     // ─── Route drawing ────────────────────────────────────────────────────────
@@ -71,8 +79,10 @@ public class MapActivity extends AppCompatActivity {
 
         DatabaseManager db = new DatabaseManager(this);
         List<double[]> points = db.getLocationsForTrip(tripId);
+        Log.d(TAG, "Loaded " + points.size() + " route points for tripId=" + tripId);
 
         if (points.isEmpty()) {
+            Log.w(TAG, "No route points found for tripId=" + tripId);
             showNoData();
             return;
         }
