@@ -4,13 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="?attr/colorSurface">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar_mood"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/white"
+        android:background="?attr/colorSurface"
         app:navigationIcon="@drawable/ic_arrow_back_24"
         app:title=""
         app:elevation="0dp"/>
@@ -70,7 +70,7 @@
             android:layout_width="wrap_content"
             android:layout_height="52dp"
             android:paddingHorizontal="40dp"
-            android:text="Save my feeling"
+            android:text="Start Trip"
             android:textSize="15sp"
             app:cornerRadius="26dp"/>
 

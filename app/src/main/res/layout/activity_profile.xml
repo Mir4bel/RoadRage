@@ -112,7 +112,7 @@
             app:strokeWidth="1dp"
             app:strokeColor="?attr/colorOutlineVariant"
             android:backgroundTint="#D3F4F5"
-            android:layout_marginBottom="64dp">
+            android:layout_marginBottom="32dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -185,7 +185,7 @@
                 android:fontFamily="sans-serif-medium"
                 android:textColor="?attr/colorOnBackground"
                 android:layout_marginBottom="4dp"
-                android:layout_marginTop="64dp"/>
+                android:layout_marginTop="32dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -202,7 +202,7 @@
                 app:cardElevation="0dp"
                 app:strokeWidth="1dp"
                 app:strokeColor="?attr/colorOutlineVariant"
-                android:layout_marginBottom="64dp">
+                android:layout_marginBottom="32dp">
 
                 <mira.pharaon.adu.ac.ae.roadrage_group5.ScoreBarChartView
                     android:id="@+id/score_chart"
@@ -252,13 +252,13 @@
                 android:text="Save Contact"
                 android:textSize="15sp"
                 app:cornerRadius="14dp"
-                android:layout_marginBottom="44dp"/>
+                android:layout_marginBottom="24dp"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_debug"
             style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
             android:text="Debug Info"
             android:textSize="12sp"
             android:textColor="?attr/colorOnSurfaceVariant" />

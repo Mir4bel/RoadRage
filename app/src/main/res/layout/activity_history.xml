@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/gradient_background">
-    >
+    android:background="?attr/colorSurface">
 
     <TextView
         android:layout_width="wrap_content"
@@ -15,7 +14,18 @@
         android:fontFamily="sans-serif-medium"
         android:textColor="?attr/colorOnSurface"
         android:paddingStart="24dp"
+        android:paddingEnd="24dp"
         android:paddingTop="24dp"
+        android:paddingBottom="4dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tap any trip to review its saved route."
+        android:textSize="13sp"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
         android:paddingBottom="16dp"/>
 
     <FrameLayout
@@ -34,12 +44,12 @@
 
         <LinearLayout
             android:id="@+id/layout_empty"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:orientation="vertical"
             android:gravity="center"
-            android:padding="32dp"
+            android:padding="40dp"
             android:visibility="gone">
 
             <TextView

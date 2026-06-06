@@ -25,6 +25,8 @@ public class ResultActivity extends AppCompatActivity {
         String mood       = getIntent().getStringExtra("mood");
         int    duration   = getIntent().getIntExtra("duration", 0);
         int    eventCount = getIntent().getIntExtra("eventCount", 0);
+        String date       = getIntent().getStringExtra("date");
+        long   tripId     = getIntent().getLongExtra("tripId", -1);
 
         PersonaManager pm = new PersonaManager();
 
@@ -98,6 +100,19 @@ public class ResultActivity extends AppCompatActivity {
         }
 
         // ─── Done button ──────────────────────────────────────────────────────
+        View btnRoute = findViewById(R.id.btn_view_route);
+        if (tripId == -1) {
+            btnRoute.setVisibility(View.GONE);
+        } else {
+            btnRoute.setOnClickListener(v -> {
+                Intent intent = new Intent(this, MapActivity.class);
+                intent.putExtra("trip_id", tripId);
+                intent.putExtra("trip_date", date);
+                intent.putExtra("trip_score", String.valueOf(score));
+                startActivity(intent);
+            });
+        }
+
         findViewById(R.id.btn_done).setOnClickListener(v -> {
             startActivity(new Intent(this, HomeActivity.class));
             finish();

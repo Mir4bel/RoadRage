@@ -43,7 +43,7 @@
                     android:id="@+id/tv_trip_persona"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Zen Driver"
+                    android:text="Cheetah"
                     android:textSize="13sp"
                     android:textColor="#FFE5E5" />
 
@@ -73,7 +73,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="View route →"
+            android:text="View route"
             android:textSize="17sp"
             android:textStyle="bold"
             android:textColor="#E9D89A"

@@ -25,6 +25,13 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="3dp"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Drive smarter, not harder."
+            android:textSize="13sp"
+            android:textColor="?attr/colorOnSurfaceVariant"/>
+
 
     </LinearLayout>
 
@@ -41,29 +48,32 @@
         android:layout_weight="1"
         android:gravity="center"
         android:orientation="vertical"
-        android:background="@color/md_theme_on_error">
+        android:padding="24dp">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_start_trip"
-            android:layout_width="190dp"
-            android:layout_height="190dp"
-            android:textSize="30dp"
-            android:padding="20dp"
+            android:layout_width="196dp"
+            android:layout_height="196dp"
+            android:text="START"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:padding="18dp"
             android:textColor="@color/md_theme_on_tertiary"
-            android:backgroundTint="#43B989"
+            android:backgroundTint="@color/md_theme_tertiary"
             android:stateListAnimator="@null"
             app:icon="@drawable/racing_flag_svgrepo_com"
             app:iconGravity="top"
-            app:iconSize="150dp"
-            app:elevation="12dp"/>
+            app:iconSize="108dp"
+            app:cornerRadius="98dp"
+            app:elevation="10dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="START TRIP"
-            android:textSize="24dp"
-            android:padding="10dp"
-            />
+            android:text="Begin a monitored drive"
+            android:textSize="16sp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:paddingTop="16dp"/>
 
     </LinearLayout>
 
@@ -72,7 +82,9 @@
         android:id="@+id/card_tip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="0dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="12dp"
+        app:cardCornerRadius="14dp"
         app:cardElevation="0dp"
         app:strokeWidth="1dp"
         app:strokeColor="?attr/colorOutlineVariant"
@@ -97,7 +109,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="TIP OF THE DAY"
-                    android:textSize="16dp"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
                     android:letterSpacing="0.1"
                     android:textColor="@color/md_theme_tertiary"/>
 
@@ -105,7 +118,7 @@
                     android:id="@+id/tv_tip_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="18dp"
+                    android:textSize="12sp"
                     android:textColor="?attr/colorOnSurfaceVariant"
                     android:layout_marginEnd="8dp"/>
 
@@ -124,7 +137,7 @@
                 android:id="@+id/tv_tip_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="14dp"
+                android:textSize="14sp"
                 android:textColor="?attr/colorOnSurface"
                 android:lineSpacingMultiplier="1.45"/>
 
@@ -137,8 +150,10 @@
         android:id="@+id/card_stats"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="12dp"
         android:visibility="gone"
-        app:cardCornerRadius="0dp"
+        app:cardCornerRadius="14dp"
         app:cardElevation="0dp"
         app:strokeWidth="1dp"
         app:strokeColor="?attr/colorOutlineVariant">

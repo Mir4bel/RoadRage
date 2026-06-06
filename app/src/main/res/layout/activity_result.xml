@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface">
+    android:background="?attr/colorSurface"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,7 +26,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="here's how you did"
+            android:text="Here is how you did"
             android:textSize="13sp"
             android:textColor="?attr/colorOnSurfaceVariant"
             android:layout_marginBottom="32dp"/>
@@ -218,6 +219,18 @@
             </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_view_route"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="View Route"
+            android:textSize="16sp"
+            app:cornerRadius="16dp"
+            app:icon="@drawable/ic_history_24"
+            app:iconGravity="textStart"
+            android:layout_marginBottom="12dp"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_done"
