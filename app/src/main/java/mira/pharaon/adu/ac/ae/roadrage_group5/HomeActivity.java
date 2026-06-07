@@ -20,51 +20,41 @@ public class HomeActivity extends BaseActivity {
         setContentView(R.layout.activity_home);
         setupBottomNav(R.id.nav_home);
 
-        // ─── Start trip button ────────────────────────────────────────────────
+
         findViewById(R.id.btn_start_trip).setOnClickListener(v ->
                 startActivity(new Intent(this, MoodActivity.class)));
 
-        // ─── Tip of the day logic ─────────────────────────────────────────────
+
         SharedPreferences prefs = getSharedPreferences("roadrage_prefs", MODE_PRIVATE);
         String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        boolean tipDismissed = today.equals(prefs.getString("tip_dismissed_date", ""));
 
         MaterialCardView cardTip   = findViewById(R.id.card_tip);
         MaterialCardView cardStats = findViewById(R.id.card_stats);
 
-//        if (tipDismissed) {
-//            cardTip.setVisibility(View.GONE);
-//            cardStats.setVisibility(View.VISIBLE);
-//        } else {
-            cardTip.setVisibility(View.VISIBLE);
-            cardStats.setVisibility(View.GONE);
+        cardTip.setVisibility(View.VISIBLE);
+        cardStats.setVisibility(View.GONE);
 
-            TextView tvTip    = findViewById(R.id.tv_tip_text);
-            TextView tvTipNum = findViewById(R.id.tv_tip_number);
-            tvTip.setText(DrivingTips.getTodaysTip());
-            //tvTipNum.setText(DrivingTips.getTodaysTipNumber() + " / " + DrivingTips.TIPS.length);
+        TextView tvTip    = findViewById(R.id.tv_tip_text);
+        tvTip.setText(DrivingTips.getTodaysTip());
 
-            ImageButton btnDismiss = findViewById(R.id.btn_dismiss_tip);
-            btnDismiss.setOnClickListener(v -> {
-                prefs.edit().putString("tip_dismissed_date", today).apply();
-                // Fade tip out, fade stats in
-                cardTip.animate().alpha(0f).setDuration(200).withEndAction(() -> {
-                    cardTip.setVisibility(View.GONE);
-                    cardStats.setAlpha(0f);
-                    cardStats.setVisibility(View.VISIBLE);
-                    cardStats.animate().alpha(1f).setDuration(200).start();
-                }).start();
-            });
-        //}
+        ImageButton btnDismiss = findViewById(R.id.btn_dismiss_tip);
+        btnDismiss.setOnClickListener(v -> {
+            prefs.edit().putString("tip_dismissed_date", today).apply();
+            cardTip.animate().alpha(0f).setDuration(200).withEndAction(() -> {
+                cardTip.setVisibility(View.GONE);
+                cardStats.setAlpha(0f);
+                cardStats.setVisibility(View.VISIBLE);
+                cardStats.animate().alpha(1f).setDuration(200).start();
+            }).start();
+        });
 
-        // ─── Stats card ───────────────────────────────────────────────────────
+
         loadStats();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Refresh stats every time the screen comes back into view
         loadStats();
     }
 

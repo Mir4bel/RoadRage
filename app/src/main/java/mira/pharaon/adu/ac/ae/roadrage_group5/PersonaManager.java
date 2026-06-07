@@ -7,7 +7,6 @@ public class PersonaManager {
     public static final String KANGAROO = "Kangaroo";
     public static final String RHINO    = "Rhino";
 
-    // ─── Core scoring ─────────────────────────────────────────────────────────
 
     public String getPersona(int score) {
         if (score >= 80) return CHEETAH;
@@ -16,8 +15,7 @@ public class PersonaManager {
         return RHINO;
     }
 
-    // ─── Backward compatibility with old persona names ────────────────────────
-    // Old DB records still use "The Surgeon" etc. — map them transparently.
+
     private String canonical(String persona) {
         switch (persona) {
             case "The Cheetah":   return CHEETAH;
@@ -28,7 +26,6 @@ public class PersonaManager {
         }
     }
 
-    // ─── Display helpers ──────────────────────────────────────────────────────
 
     public String getPersonaEmoji(String persona) {
         switch (canonical(persona)) {
@@ -41,10 +38,10 @@ public class PersonaManager {
 
     public String getPersonaColor(String persona) {
         switch (canonical(persona)) {
-            case CHEETAH:  return "#00695C"; // deep teal-green: precision
-            case BEAVER:   return "#1565C0"; // deep blue: calm, reliable
-            case KANGAROO: return "#E65100"; // deep orange: erratic, energetic
-            default:       return "#B71C1C"; // deep red: aggressive
+            case CHEETAH:  return "#00695C";
+            case BEAVER:   return "#1565C0";
+            case KANGAROO: return "#E65100";
+            default:       return "#B71C1C";
         }
     }
 
@@ -57,7 +54,6 @@ public class PersonaManager {
         }
     }
 
-    /** Short message shown on the result screen */
     public String getPersonaMessage(String persona) {
         switch (canonical(persona)) {
             case CHEETAH:  return "Flawless execution. You read the road before it happens.";
@@ -67,7 +63,6 @@ public class PersonaManager {
         }
     }
 
-    // ─── Detail screen content ────────────────────────────────────────────────
 
     public String getPersonaOverview(String persona) {
         switch (canonical(persona)) {

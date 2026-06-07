@@ -24,7 +24,6 @@ public class LocationTracker implements LocationListener {
     public interface LocationEventListener {
         void onSpeedUpdate(float speedKmh);
         void onSpeedingDetected(float speedKmh);
-        // New: fires every GPS update with full coordinates for map recording
         void onLocationUpdate(double lat, double lng, float speedKmh);
     }
 
@@ -59,7 +58,6 @@ public class LocationTracker implements LocationListener {
                 Log.d(TAG, "Network updates requested");
             }
 
-            // Seed UI with last known speed immediately
             Location lastLocation = null;
             if (gpsEnabled)
                 lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -94,7 +92,6 @@ public class LocationTracker implements LocationListener {
                 + " lng=" + location.getLongitude()
                 + " hasSpeed=" + location.hasSpeed());
 
-        // Guard: only use speed if the fix actually has one
         if (location.hasSpeed()) {
             currentSpeedKmh = location.getSpeed() * 3.6f;
         } else {
@@ -103,10 +100,8 @@ public class LocationTracker implements LocationListener {
 
         Log.d(TAG, "Speed km/h=" + currentSpeedKmh);
 
-        // Existing speed callback (still used by TripActivity UI)
         eventListener.onSpeedUpdate(currentSpeedKmh);
 
-        // New: full-coordinate callback for map recording
         eventListener.onLocationUpdate(
                 location.getLatitude(), location.getLongitude(), currentSpeedKmh);
 

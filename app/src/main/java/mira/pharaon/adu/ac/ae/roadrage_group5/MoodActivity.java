@@ -29,7 +29,6 @@ public class MoodActivity extends AppCompatActivity {
         MoodWheelView wheel = findViewById(R.id.mood_wheel);
         MaterialButton btnSave = findViewById(R.id.btn_save_mood);
 
-        // "How are you feeling right now?" — highlight the word "feeling"
         String full = "How are you feeling right now?";
         SpannableString ss = new SpannableString(full);
         int s = full.indexOf("feeling"), e = s + 7;
@@ -38,11 +37,9 @@ public class MoodActivity extends AppCompatActivity {
         ss.setSpan(new StyleSpan(Typeface.BOLD), s, e, 0);
         tvTitle.setText(ss);
 
-        // Set initial display state
         tvEmoji.setText(MoodWheelView.EMOJIS[0]);
         tvLabel.setText("I'm Feeling " + MoodWheelView.MOOD_NAMES[0]);
 
-        // Update display whenever the wheel moves
         wheel.setOnMoodSelectedCallback((index, moodName, emoji) -> {
             currentMood = moodName;
             tvEmoji.setText(emoji);

@@ -70,14 +70,12 @@ public class ScoreBarChartView extends View {
         float gH      = gBottom - gTop;
         float gW      = gRight - gLeft;
 
-        // Y-axis grid lines and labels
         for (int mark : Y_MARKS) {
             float y = gBottom - (mark / 100f) * gH;
             canvas.drawLine(gLeft, y, gRight, y, gridPaint);
             canvas.drawText(String.valueOf(mark), axisW - dpToPx(4), y + spToPx(3.5f), labelPaint);
         }
 
-        // Y-axis border line
         canvas.drawLine(gLeft, gTop, gLeft, gBottom, axisPaint);
 
         if (scores.isEmpty()) return;
@@ -97,7 +95,6 @@ public class ScoreBarChartView extends View {
             barPaint.setColor(scoreColor(score));
             canvas.drawRoundRect(new RectF(left, top, right, gBottom), r, r, barPaint);
 
-            // Trip number below bar
             float xCenter = left + barW / 2f;
             canvas.drawText(String.valueOf(i + 1), xCenter, h - dpToPx(4), xLabelPaint);
         }

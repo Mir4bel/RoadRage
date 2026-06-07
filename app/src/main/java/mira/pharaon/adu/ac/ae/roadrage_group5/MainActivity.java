@@ -9,7 +9,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Navigate directly to home and finish this activity
+
         startActivity(new Intent(this, HomeActivity.class));
         finish();
     }

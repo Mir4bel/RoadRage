@@ -11,7 +11,7 @@ import java.util.List;
 public class DatabaseManager extends SQLiteOpenHelper {
 
     private static final String DB_NAME    = "roadrage.db";
-    private static final int    DB_VERSION = 3; // v3: added timestamp_ms to trips
+    private static final int    DB_VERSION = 3; // needed to add timestamp_ms to trips
 
     public DatabaseManager(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -64,14 +64,11 @@ public class DatabaseManager extends SQLiteOpenHelper {
                     "FOREIGN KEY(trip_id) REFERENCES trips(id))");
         }
         if (oldVersion < 3) {
-            // Add timestamp column; existing rows get 0 (they'll be excluded from weekly queries)
             db.execSQL("ALTER TABLE trips ADD COLUMN timestamp_ms INTEGER DEFAULT 0");
         }
     }
 
-    // ─── Trip methods ─────────────────────────────────────────────────────────
 
-    /** timestamp_ms is recorded automatically — callers don't need to pass it. */
     public long insertTrip(String date, int duration, int score, String mood,
                            int eventCount, String persona) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -86,7 +83,6 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return db.insert("trips", null, v);
     }
 
-    /** [0]=date [1]=score [2]=persona [3]=mood [4]=id — DESC order */
     public List<String[]> getAllTrips() {
         List<String[]> trips = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -104,7 +100,6 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return trips;
     }
 
-    /** Top N trips by score — for the leaderboard. Same format as getAllTrips. */
     public List<String[]> getTopTrips(int limit) {
         List<String[]> trips = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -172,15 +167,9 @@ public class DatabaseManager extends SQLiteOpenHelper {
         db.update("user", v, "id = 1", null);
     }
 
-    // ─── Achievement queries ──────────────────────────────────────────────────
 
-    /**
-     * Returns true if the last N completed trips all scored >= threshold.
-     * Used for CHEETAH_X3 (last 3 trips all >= 80).
-     */
     public boolean lastNTripsAllAboveScore(int n, int threshold) {
         SQLiteDatabase db = this.getReadableDatabase();
-        // Count how many of the last N trips meet the threshold
         Cursor c = db.rawQuery(
                 "SELECT COUNT(*) FROM (SELECT score FROM trips ORDER BY id DESC LIMIT ?) " +
                         "WHERE score >= ?",
@@ -188,17 +177,13 @@ public class DatabaseManager extends SQLiteOpenHelper {
         if (c.moveToFirst()) {
             int count = c.getInt(0);
             c.close();
-            // Must have at least N trips AND all of them qualify
             return getAllTrips().size() >= n && count >= n;
         }
         c.close();
         return false;
     }
 
-    /**
-     * Returns true if the last N trips all had zero harsh events.
-     * Used for CLEAN_X3.
-     */
+
     public boolean lastNTripsAllClean(int n) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(
@@ -214,10 +199,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return false;
     }
 
-    /**
-     * Returns true if the average of the last 5 trips exceeds the average of the
-     * first 5 trips by at least 'points'. Requires at least 10 trips total.
-     */
+
     public boolean hasImprovedByPoints(int points) {
         if (getAllTrips().size() < 10) return false;
         SQLiteDatabase db = this.getReadableDatabase();
@@ -237,7 +219,6 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return (lastAvg - firstAvg) >= points;
     }
 
-    // ─── Weekly stats ─────────────────────────────────────────────────────────
 
     public static class WeeklyStats {
         public final int avgScore;
@@ -245,10 +226,7 @@ public class DatabaseManager extends SQLiteOpenHelper {
         WeeklyStats(int avg, int count) { avgScore = avg; tripCount = count; }
     }
 
-    /**
-     * thisWeek=true  → stats for the last 7 days
-     * thisWeek=false → stats for the 7 days before that
-     */
+
     public WeeklyStats getWeeklyStats(boolean thisWeek) {
         long now      = System.currentTimeMillis();
         long weekMs   = 7L * 24 * 60 * 60 * 1000;
@@ -271,7 +249,6 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return new WeeklyStats(0, 0);
     }
 
-    // ─── Location methods ─────────────────────────────────────────────────────
 
     public void insertLocation(long tripId, double lat, double lng, float speedKmh) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -297,7 +274,6 @@ public class DatabaseManager extends SQLiteOpenHelper {
         return points;
     }
 
-    // ─── Event methods ────────────────────────────────────────────────────────
 
     public void insertEvent(long tripId, String eventType, int severity, String timestamp) {
         SQLiteDatabase db = this.getWritableDatabase();

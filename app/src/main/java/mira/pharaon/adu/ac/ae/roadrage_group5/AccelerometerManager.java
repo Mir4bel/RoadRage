@@ -10,10 +10,9 @@ public class AccelerometerManager implements SensorEventListener {
 
     private static final float BRAKE_THRESHOLD = 15.0f;
     private static final float TURN_THRESHOLD  = 12.0f;
-    private static final float CRASH_THRESHOLD_M_S2 = 30.0f; // ~3g combined
+    private static final float CRASH_THRESHOLD_M_S2 = 30.0f;
 
-    // Cooldown prevents logging 50 events from one bump
-    // One event max every 2 seconds
+    // one event max every 2 seconds
     private static final long COOLDOWN_MS = 2000;
     private long lastEventTime = 0;
 
@@ -28,40 +27,34 @@ public class AccelerometerManager implements SensorEventListener {
 
     public void setCrashListener(CrashListener l) { this.crashListener = l; }
 
-    // Same pattern as LocationTracker — interface to talk back to TripActivity
     public interface AccelerometerEventListener {
         void onHarshEvent(String type, float severity);
     }
 
-    // Constructor — call from TripActivity:
-    // accelManager = new AccelerometerManager(this, this);
     public AccelerometerManager(Context context, AccelerometerEventListener listener) {
         this.eventListener = listener;
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
     }
 
-    // Call when trip starts
     public void startListening() {
         if (accelerometer != null) {
-            // SENSOR_DELAY_NORMAL = ~5 readings/second, enough for driving
             sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         }
     }
 
-    // Call when trip ends
     public void stopListening() {
         sensorManager.unregisterListener(this);
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        float x = event.values[0]; // left/right tilt — detects sharp turns
-        float y = event.values[1]; // forward/back tilt — detects braking
-        float z = event.values[2]; //is up/down — not needed for driving
+        float x = event.values[0];
+        float y = event.values[1];
+        float z = event.values[2];
 
         long now = System.currentTimeMillis();
-        if (now - lastEventTime < COOLDOWN_MS) return; // still in cooldown
+        if (now - lastEventTime < COOLDOWN_MS) return;
 
         if (Math.abs(y) > BRAKE_THRESHOLD) {
             lastEventTime = now;
@@ -81,6 +74,5 @@ public class AccelerometerManager implements SensorEventListener {
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // Required by SensorEventListener but we don't need it
     }
 }

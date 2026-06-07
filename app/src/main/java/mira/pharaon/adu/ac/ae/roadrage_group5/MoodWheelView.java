@@ -15,11 +15,9 @@ import android.view.animation.DecelerateInterpolator;
 
 public class MoodWheelView extends View {
 
-    public static final String[] EMOJIS =
-            {"😊", "😌", "😐", "😴", "😣"};
+    public static final String[] EMOJIS = {"😊", "😌", "😐", "😴", "😣"};
 
-    public static final String[] MOOD_NAMES =
-            {"Happy", "Calm", "Neutral", "Tired", "Stressed"};
+    public static final String[] MOOD_NAMES = {"Happy", "Calm", "Neutral", "Tired", "Stressed"};
 
     private static final int[] MOOD_COLORS = {
             Color.parseColor("#FFD54F"),
@@ -97,14 +95,12 @@ public class MoodWheelView extends View {
             float proximity =
                     1f - Math.min(1f, Math.abs(rel) * 0.45f);
 
-            // center MUCH bigger
             float emojiSizePx =
                     spToPx(18 + 52 * proximity);
 
             float alpha =
                     0.35f + 0.65f * proximity;
 
-            // ===== FIX: color restored per emoji =====
             circlePaint.setColor(
                     Color.argb((int)(alpha * 140),
                             Color.red(MOOD_COLORS[i]),
@@ -112,7 +108,6 @@ public class MoodWheelView extends View {
                             Color.blue(MOOD_COLORS[i]))
             );
 
-            // subtle shadow only for far items
             if (Math.abs(rel) > 2.3f) {
                 shadowPaint.setShadowLayer(
                         22,
@@ -131,7 +126,6 @@ public class MoodWheelView extends View {
                 shadowPaint.clearShadowLayer();
             }
 
-            // background circle
             canvas.drawCircle(
                     x,
                     y,
@@ -139,7 +133,6 @@ public class MoodWheelView extends View {
                     circlePaint
             );
 
-            // ===== FIX: NO STATE LEAK =====
             emojiPaint.setColor(Color.BLACK);
             emojiPaint.setAlpha((int)(255 * alpha));
             emojiPaint.setTextSize(emojiSizePx);

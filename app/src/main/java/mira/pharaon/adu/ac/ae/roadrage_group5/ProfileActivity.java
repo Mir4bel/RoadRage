@@ -28,7 +28,6 @@ public class ProfileActivity extends BaseActivity {
 
         DatabaseManager db = new DatabaseManager(this);
 
-        // ─── Stats ───────────────────────────────────────────────────────────
         TextView tvTrips   = findViewById(R.id.tv_total_trips);
         TextView tvAvg     = findViewById(R.id.tv_profile_avg);
         TextView tvPersona = findViewById(R.id.tv_profile_persona);
@@ -47,7 +46,6 @@ public class ProfileActivity extends BaseActivity {
             tvPersona.setText("—  No trips yet");
         }
 
-        // Make the persona card tappable — opens the detail screen
         tvPersona.setOnClickListener(v -> {
             String currentPersona = stats[1];
             if (!currentPersona.equals("Unknown")) {
@@ -58,24 +56,22 @@ public class ProfileActivity extends BaseActivity {
         });
 
 
-        // Visual hint: underline + clickable indicator
         tvPersona.setPaintFlags(tvPersona.getPaintFlags() | android.graphics.Paint.UNDERLINE_TEXT_FLAG);
 
-        // ─── Score trend chart ────────────────────────────────────────────────
         ScoreBarChartView chart = findViewById(R.id.score_chart);
         List<Integer> scores = new ArrayList<>();
-        // getAllTrips returns DESC order — chart wants oldest first (ASC)
+
         for (int i = trips.size() - 1; i >= 0 && i >= trips.size() - 10; i--) {
             scores.add(Integer.parseInt(trips.get(i)[1]));
         }
         chart.setScores(scores);
 
-        // ─── Mood impact ──────────────────────────────────────────────────────
+
         LinearLayout llMood = findViewById(R.id.ll_mood_impact);
         List<String[]> moodData = db.getAverageScoreByMood();
         if (moodData.isEmpty()) {
             TextView empty = new TextView(this);
-            empty.setText("No data yet — complete a trip to see mood impact.");
+            empty.setText("No data yet. complete a trip to see mood impact.");
             empty.setTextColor(getColor(android.R.color.darker_gray));
             llMood.addView(empty);
         } else {
@@ -88,7 +84,6 @@ public class ProfileActivity extends BaseActivity {
             }
         }
 
-        // ─── Emergency contact ────────────────────────────────────────────────
         SharedPreferences prefs = getSharedPreferences("roadrage_prefs", MODE_PRIVATE);
         EditText etContact  = findViewById(R.id.et_emergency_contact);
         MaterialButton btnSaveContact = findViewById(R.id.btn_save_contact);
@@ -104,7 +99,6 @@ public class ProfileActivity extends BaseActivity {
                     Toast.LENGTH_SHORT).show();
         });
 
-        // ─── Debug button ─────────────────────────────────────────────────────
         MaterialButton btnDebug = findViewById(R.id.btn_debug);
         btnDebug.setOnClickListener(v ->
                 startActivity(new Intent(this, DebugActivity.class)));

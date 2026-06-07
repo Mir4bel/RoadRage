@@ -21,10 +21,10 @@ public class HistoryActivity extends BaseActivity {
         setupBottomNav(R.id.nav_history);
 
         RecyclerView recyclerView = findViewById(R.id.rv_trip_history);
-        View emptyLayout          = findViewById(R.id.layout_empty);
+        View emptyLayout = findViewById(R.id.layout_empty);
 
         DatabaseManager tripDAO = new DatabaseManager(this);
-        List<String[]> trips    = tripDAO.getAllTrips();
+        List<String[]> trips = tripDAO.getAllTrips();
 
         if (trips.isEmpty()) {
             recyclerView.setVisibility(View.GONE);
@@ -34,31 +34,29 @@ public class HistoryActivity extends BaseActivity {
             emptyLayout.setVisibility(View.GONE);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.setAdapter(new TripAdapter(trips, trip -> {
-                // trip[4] is the trip ID — open MapActivity for this specific trip
+
                 Intent intent = new Intent(this, MapActivity.class);
-                intent.putExtra("trip_id",    Long.parseLong(trip[4]));
-                intent.putExtra("trip_date",  trip[0]);
+                intent.putExtra("trip_id", Long.parseLong(trip[4]));
+                intent.putExtra("trip_date", trip[0]);
                 intent.putExtra("trip_score", trip[1]);
                 startActivity(intent);
             }));
         }
     }
 
-    // ─── Click listener interface ─────────────────────────────────────────────
 
     interface OnTripClickListener {
         void onTripClick(String[] trip);
     }
 
-    // ─── Adapter ──────────────────────────────────────────────────────────────
 
     static class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
 
-        private final List<String[]>      trips;
+        private final List<String[]> trips;
         private final OnTripClickListener clickListener;
 
         TripAdapter(List<String[]> trips, OnTripClickListener listener) {
-            this.trips         = trips;
+            this.trips = trips;
             this.clickListener = listener;
         }
 
@@ -66,10 +64,10 @@ public class HistoryActivity extends BaseActivity {
             TextView tvDate, tvPersona, tvMood, tvScore;
             ViewHolder(View v) {
                 super(v);
-                tvDate    = v.findViewById(R.id.tv_trip_date);
+                tvDate = v.findViewById(R.id.tv_trip_date);
                 tvPersona = v.findViewById(R.id.tv_trip_persona);
-                tvMood    = v.findViewById(R.id.tv_trip_mood);
-                tvScore   = v.findViewById(R.id.tv_trip_score);
+                tvMood = v.findViewById(R.id.tv_trip_mood);
+                tvScore = v.findViewById(R.id.tv_trip_score);
             }
         }
 
@@ -83,12 +81,10 @@ public class HistoryActivity extends BaseActivity {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             String[] trip = trips.get(position);
-            // trip[0] = date (now includes time for new trips e.g. "Jun 04, 2026 · 14:30")
             holder.tvDate.setText(trip[0]);
             holder.tvScore.setText(trip[1]);
             holder.tvPersona.setText(trip[2]);
             holder.tvMood.setText(trip[3]);
-            // Whole card is tappable — opens the route map
             holder.itemView.setOnClickListener(v -> clickListener.onTripClick(trip));
         }
 

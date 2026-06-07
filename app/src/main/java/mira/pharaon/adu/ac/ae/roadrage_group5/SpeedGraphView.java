@@ -19,10 +19,9 @@ public class SpeedGraphView extends View {
     private static final int   MAX_PTS   = 60;
     private static final float MAX_SPEED = 160f;
 
-    // Layout constants (dp)
-    private static final float AXIS_L_DP  = 44f;  // left axis width
+    private static final float AXIS_L_DP  = 44f;
     private static final float PAD_TOP_DP =  8f;
-    private static final float PAD_BOT_DP = 22f;  // bottom padding keeps zero visible
+    private static final float PAD_BOT_DP = 22f;
     private static final float PAD_R_DP   =  6f;
 
     private final Paint linePaint  = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -33,7 +32,7 @@ public class SpeedGraphView extends View {
     private final Paint basePaint  = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint dotPaint   = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-    public SpeedGraphView(Context c)                     { super(c);       init(); }
+    public SpeedGraphView(Context c) { super(c); init(); }
     public SpeedGraphView(Context c, AttributeSet attrs) { super(c, attrs); init(); }
 
     private void init() {
@@ -57,7 +56,6 @@ public class SpeedGraphView extends View {
         labelPaint.setColor(Color.argb(120, 100, 100, 100));
         labelPaint.setTextAlign(Paint.Align.RIGHT);
 
-        // Baseline (zero speed) — slightly thicker grid line
         basePaint.setStyle(Paint.Style.STROKE);
         basePaint.setStrokeWidth(dpToPx(1.5f));
         basePaint.setColor(Color.argb(80, 100, 100, 100));
@@ -83,27 +81,23 @@ public class SpeedGraphView extends View {
         float gLeft   = axisL;
         float gTop    = padT;
         float gRight  = w - padR;
-        float gBottom = h - padB; // zero speed maps here — NOT h, so it stays visible
+        float gBottom = h - padB;
         float gH      = gBottom - gTop;
         float gW      = gRight - gLeft;
 
-        // ─── Grid lines and Y-axis labels ────────────────────────────────────
         float[] speedMarks = {0, 40, 80, 120};
         for (float mark : speedMarks) {
             float y = gBottom - (mark / MAX_SPEED) * gH;
 
             if (mark == 0) {
-                // Baseline: draw it a bit more prominently
                 canvas.drawLine(gLeft, y, gRight, y, basePaint);
             } else {
                 canvas.drawLine(gLeft, y, gRight, y, gridPaint);
             }
 
-            // Number label
             canvas.drawText(String.valueOf((int) mark), axisL - dpToPx(5), y + spToPx(3.5f), labelPaint);
         }
 
-        // "km/h" label — rotated on left axis
         canvas.save();
         float axisLabelX = dpToPx(9);
         float axisLabelY = (gTop + gBottom) / 2f;
@@ -113,12 +107,9 @@ public class SpeedGraphView extends View {
         canvas.restore();
         labelPaint.setTextAlign(Paint.Align.RIGHT); // restore
 
-        // ─── Border rect ─────────────────────────────────────────────────────
         canvas.drawRect(new RectF(gLeft, gTop, gRight, gBottom), borderPaint);
 
-        // ─── Empty state ──────────────────────────────────────────────────────
         if (history.size() < 2) {
-            // Show a pulsing dot at the zero baseline so user knows the graph is active
             float dotX = gLeft + dpToPx(12);
             dotPaint.setColor(Color.parseColor("#2196F3"));
             dotPaint.setAlpha(160);
@@ -127,13 +118,10 @@ public class SpeedGraphView extends View {
             return;
         }
 
-        // ─── Speed history line and fill ─────────────────────────────────────
         int count = history.size();
-        // Right-anchored: latest reading is at x = gRight
         float xStep  = gW / (MAX_PTS - 1);
         float xStart = gLeft + (MAX_PTS - count) * xStep;
 
-        // Fill path
         Path fill = new Path();
         float x0 = xStart, y0 = gBottom - (history.get(0) / MAX_SPEED) * gH;
         fill.moveTo(x0, gBottom);
@@ -150,7 +138,6 @@ public class SpeedGraphView extends View {
         fillPaint.setAlpha(40);
         canvas.drawPath(fill, fillPaint);
 
-        // Line (segment-by-segment so each segment can have its own speed color)
         for (int i = 1; i < count; i++) {
             float x1 = xStart + (i - 1) * xStep;
             float y1 = gBottom - (history.get(i - 1) / MAX_SPEED) * gH;
@@ -160,7 +147,6 @@ public class SpeedGraphView extends View {
             canvas.drawLine(x1, y1, x2, y2, linePaint);
         }
 
-        // Live dot at the current position
         float latest = history.get(count - 1);
         float dotX   = xStart + (count - 1) * xStep;
         float dotY   = gBottom - (latest / MAX_SPEED) * gH;

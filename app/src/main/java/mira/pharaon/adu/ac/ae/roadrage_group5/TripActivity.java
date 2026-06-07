@@ -125,7 +125,6 @@ public class TripActivity extends AppCompatActivity
         try {
             tripMap.setMyLocationEnabled(true);
         } catch (SecurityException ignored) {
-            // Permission can change while the activity is alive.
         }
     }
 
@@ -165,7 +164,6 @@ public class TripActivity extends AppCompatActivity
 
     @Override
     public void onSpeedUpdate(float speedKmh) {
-        // Full location updates carry the speed and coordinates together.
     }
 
     @Override

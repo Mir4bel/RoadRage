@@ -20,17 +20,16 @@ public class ResultActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
 
-        int    score      = getIntent().getIntExtra("score", 0);
-        String persona    = getIntent().getStringExtra("persona");
-        String mood       = getIntent().getStringExtra("mood");
-        int    duration   = getIntent().getIntExtra("duration", 0);
-        int    eventCount = getIntent().getIntExtra("eventCount", 0);
-        String date       = getIntent().getStringExtra("date");
-        long   tripId     = getIntent().getLongExtra("tripId", -1);
+        int score = getIntent().getIntExtra("score", 0);
+        String persona = getIntent().getStringExtra("persona");
+        String mood = getIntent().getStringExtra("mood");
+        int duration = getIntent().getIntExtra("duration", 0);
+        int eventCount = getIntent().getIntExtra("eventCount", 0);
+        String date = getIntent().getStringExtra("date");
+        long tripId = getIntent().getLongExtra("tripId", -1);
 
         PersonaManager pm = new PersonaManager();
 
-        // ─── Score + persona visuals ──────────────────────────────────────────
         ((TextView) findViewById(R.id.tv_score)).setText(String.valueOf(score));
         ((TextView) findViewById(R.id.tv_persona_result)).setText(persona);
         ((TextView) findViewById(R.id.tv_persona_message)).setText(pm.getPersonaMessage(persona));
@@ -45,27 +44,24 @@ public class ResultActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.tv_persona_result))
                 .setTextColor(Color.parseColor(pm.getPersonaColor(persona)));
 
-        // ─── Quick stats ──────────────────────────────────────────────────────
         int  min = duration / 60, sec = duration % 60;
         ((TextView) findViewById(R.id.tv_duration))
                 .setText(String.format(Locale.getDefault(), "%d:%02d", min, sec));
         ((TextView) findViewById(R.id.tv_events_result))
                 .setText(String.valueOf(eventCount));
 
-        // ─── Streak update ────────────────────────────────────────────────────
-        // NOTE: trip is already saved to DB by TripActivity before this screen opens.
         int newStreak = StreakManager.update(this, score);
 
-        // ─── Achievement check ────────────────────────────────────────────────
+
         DatabaseManager db = new DatabaseManager(this);
         List<AchievementManager.Achievement> unlocked =
                 AchievementManager.checkAndUnlock(this, db, score, mood, eventCount, newStreak);
 
-        // ─── Coaching message ─────────────────────────────────────────────────
+
         ((TextView) findViewById(R.id.tv_coaching))
                 .setText(coachingMessage(score, eventCount));
 
-        // ─── Streak badge ─────────────────────────────────────────────────────
+
         TextView tvStreak = findViewById(R.id.tv_streak_badge);
         if (score >= StreakManager.SAFE_THRESHOLD) {
             if (newStreak == 1) {
@@ -83,9 +79,9 @@ public class ResultActivity extends AppCompatActivity {
             }
         }
 
-        // ─── Achievement unlocks ──────────────────────────────────────────────
+
         if (!unlocked.isEmpty()) {
-            View cardAch   = findViewById(R.id.card_achievements);
+            View cardAch = findViewById(R.id.card_achievements);
             LinearLayout ll = findViewById(R.id.ll_new_achievements);
             cardAch.setVisibility(View.VISIBLE);
 
@@ -99,7 +95,7 @@ public class ResultActivity extends AppCompatActivity {
             }
         }
 
-        // ─── Done button ──────────────────────────────────────────────────────
+
         View btnRoute = findViewById(R.id.btn_view_route);
         if (tripId == -1) {
             btnRoute.setVisibility(View.GONE);
@@ -120,8 +116,8 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     private String coachingMessage(int score, int eventCount) {
-        if (score == 100)       return "Flawless. Zero events, total control. Set this as the standard.";
-        if (eventCount == 0)    return "Clean trip. Smooth all the way through.";
+        if (score == 100) return "Flawless. Zero events, total control. Set this as the standard.";
+        if (eventCount == 0) return "Clean trip. Smooth all the way through.";
 
         String ev = eventCount + " harsh event" + (eventCount == 1 ? "" : "s") + " detected. ";
 

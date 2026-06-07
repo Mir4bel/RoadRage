@@ -9,22 +9,21 @@ public class AchievementManager {
 
     private static final String PREFS = "roadrage_achievements";
 
-    // Achievement IDs — keep these stable; they're the persistence keys
     public static final String FIRST_TRIP = "first_trip";
-    public static final String TRIPS_10   = "trips_10";
-    public static final String TRIPS_25   = "trips_25";
-    public static final String TRIPS_50   = "trips_50";
-    public static final String SCORE_60   = "score_60";
-    public static final String SCORE_80   = "score_80";
-    public static final String PERFECT    = "perfect_100";
+    public static final String TRIPS_10 = "trips_10";
+    public static final String TRIPS_25 = "trips_25";
+    public static final String TRIPS_50 = "trips_50";
+    public static final String SCORE_60 = "score_60";
+    public static final String SCORE_80 = "score_80";
+    public static final String PERFECT = "perfect_100";
     public static final String CLEAN_TRIP = "clean_trip";
-    public static final String STREAK_3   = "streak_3";
-    public static final String STREAK_7   = "streak_7";
-    public static final String STREAK_20  = "streak_20";
+    public static final String STREAK_3 = "streak_3";
+    public static final String STREAK_7 = "streak_7";
+    public static final String STREAK_20 = "streak_20";
     public static final String HAPPY_HIGH = "happy_high";
     public static final String CHEETAH_X3 = "cheetah_x3";
-    public static final String CLEAN_X3   = "clean_x3";
-    public static final String IMPROVED   = "improved_10";
+    public static final String CLEAN_X3 = "clean_x3";
+    public static final String IMPROVED = "improved_10";
 
     public static class Achievement {
         public final String id;
@@ -69,11 +68,7 @@ public class AchievementManager {
         return list;
     }
 
-    /**
-     * Check all achievements against the just-completed trip.
-     * Must be called AFTER the trip is saved to DB (so total trip count is correct).
-     * Returns the list of newly unlocked achievements for display on the result screen.
-     */
+
     public static List<Achievement> checkAndUnlock(Context ctx, DatabaseManager db,
                                                    int score, String mood,
                                                    int eventCount, int newStreak) {
@@ -83,24 +78,22 @@ public class AchievementManager {
 
         int totalTrips = db.getAllTrips().size();
 
-        // Build a map of which conditions are currently true
-        // Using simple boolean checks against available data
         boolean[] conditions = {
-                /* FIRST_TRIP */ totalTrips >= 1,
-                /* TRIPS_10   */ totalTrips >= 10,
-                /* TRIPS_25   */ totalTrips >= 25,
-                /* TRIPS_50   */ totalTrips >= 50,
-                /* SCORE_60   */ score >= 60,
-                /* SCORE_80   */ score >= 80,
-                /* PERFECT    */ score == 100,
-                /* CLEAN_TRIP */ eventCount == 0,
-                /* STREAK_3   */ newStreak >= 3,
-                /* STREAK_7   */ newStreak >= 7,
-                /* STREAK_20  */ newStreak >= 20,
-                /* HAPPY_HIGH */ "Happy".equals(mood) && score >= 75,
-                /* CHEETAH_X3 */ db.lastNTripsAllAboveScore(3, 80),
-                /* CLEAN_X3   */ db.lastNTripsAllClean(3),
-                /* IMPROVED   */ db.hasImprovedByPoints(10),
+                totalTrips >= 1,
+                totalTrips >= 10,
+                totalTrips >= 25,
+                totalTrips >= 50,
+                score >= 60,
+                score >= 80,
+                score == 100,
+                eventCount == 0,
+                newStreak >= 3,
+                newStreak >= 7,
+                newStreak >= 20,
+                "Happy".equals(mood) && score >= 75,
+                db.lastNTripsAllAboveScore(3, 80),
+                db.lastNTripsAllClean(3),
+                db.hasImprovedByPoints(10),
         };
 
         List<Achievement> all = getAll(ctx);
@@ -120,7 +113,6 @@ public class AchievementManager {
     public static int getUnlockedCount(Context ctx) {
         SharedPreferences p = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         int count = 0;
-        // Count how many known IDs are unlocked
         String[] allIds = {FIRST_TRIP, TRIPS_10, TRIPS_25, TRIPS_50, SCORE_60, SCORE_80,
                 PERFECT, CLEAN_TRIP, STREAK_3, STREAK_7, STREAK_20, HAPPY_HIGH,
                 CHEETAH_X3, CLEAN_X3, IMPROVED};

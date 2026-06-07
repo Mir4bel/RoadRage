@@ -1,6 +1,5 @@
 package mira.pharaon.adu.ac.ae.roadrage_group5;
 
-import java.util.Calendar;
 import java.util.Random;
 
 public class DrivingTips {
@@ -96,15 +95,9 @@ public class DrivingTips {
 
     private static Random random = new Random();
 
-    /** Returns random tip*/
     public static String getTodaysTip() {
-        int randomTip = random.nextInt(83);
+        int randomTip = random.nextInt(86);
         return TIPS[randomTip % TIPS.length];
     }
 
-//    /** Returns which tip number is showing today (1-indexed, for display) */
-//    public static int getTodaysTipNumber() {
-//        int dayOfYear = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
-//        return (dayOfYear % TIPS.length) + 1;
-//    }
 }

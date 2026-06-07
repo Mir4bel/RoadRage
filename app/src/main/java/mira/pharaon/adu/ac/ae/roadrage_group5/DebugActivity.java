@@ -48,13 +48,12 @@ public class DebugActivity extends AppCompatActivity implements SensorEventListe
         populateStaticSections();
         setupActionButtons();
 
-        // Live accelerometer
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         if (accelerometer != null)
             sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI);
 
-        // Periodic refresh for DB + GPS (every 1s)
+
         periodicRefresh = new Runnable() {
             @Override
             public void run() {
@@ -83,10 +82,8 @@ public class DebugActivity extends AppCompatActivity implements SensorEventListe
         sensorManager.unregisterListener(this);
     }
 
-    // ─── Static info (set once) ───────────────────────────────────────────────
 
     private void populateStaticSections() {
-        // Device info
         TextView tvDevice = findViewById(R.id.tv_device_info);
         String version = "unknown";
         try { version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName; }
@@ -121,7 +118,6 @@ public class DebugActivity extends AppCompatActivity implements SensorEventListe
                         "Event cooldown : 2 s  |  Crash cooldown : 5 s"
         );
 
-        // Permissions
         TextView tvPerms = findViewById(R.id.tv_permissions);
         int fineLocation = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION);
         int sendSms      = ContextCompat.checkSelfPermission(this, android.Manifest.permission.SEND_SMS);
@@ -131,7 +127,6 @@ public class DebugActivity extends AppCompatActivity implements SensorEventListe
         );
     }
 
-    // ─── Live refreshes ───────────────────────────────────────────────────────
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -198,7 +193,6 @@ public class DebugActivity extends AppCompatActivity implements SensorEventListe
         );
     }
 
-    // ─── Action buttons ───────────────────────────────────────────────────────
 
     private void setupActionButtons() {
         MaterialButton btnClear = findViewById(R.id.btn_clear_db);
@@ -235,7 +229,7 @@ public class DebugActivity extends AppCompatActivity implements SensorEventListe
     }
 
     private void copyStatsToClipboard() {
-        refreshDbStats(); // ensure fresh
+        refreshDbStats();
         String text =
                 "=== RoadRage Debug Export ===\n\n" +
                         tvDbStats.getText() + "\n\n" +
@@ -249,7 +243,6 @@ public class DebugActivity extends AppCompatActivity implements SensorEventListe
     }
 
     private String tvDevice_text() {
-        // Rebuild device string inline for the export
         return "Device: " + Build.MANUFACTURER + " " + Build.MODEL +
                 "\nAndroid: " + Build.VERSION.RELEASE + " (API " + Build.VERSION.SDK_INT + ")";
     }

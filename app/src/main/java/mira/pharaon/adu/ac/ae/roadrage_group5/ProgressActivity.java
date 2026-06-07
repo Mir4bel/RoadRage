@@ -26,7 +26,6 @@ public class ProgressActivity extends BaseActivity {
         buildAchievements();
     }
 
-    // ─── Streak ───────────────────────────────────────────────────────────────
 
     private void buildStreakSection() {
         int current = StreakManager.getCurrent(this);
